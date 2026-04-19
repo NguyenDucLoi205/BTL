@@ -1,6 +1,6 @@
-﻿namespace BTL
+namespace BTL
 {
-    partial class dangnhap
+    partial class Dangnhap
     {
         /// <summary>
         /// Required designer variable.
@@ -130,7 +130,7 @@
             textBox2.Size = new Size(197, 32);
             textBox2.TabIndex = 12;
             // 
-            // dangnhap
+            // Dangnhap
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -141,7 +141,7 @@
             Controls.Add(label3);
             Controls.Add(pictureBox2);
             Controls.Add(panel1);
-            Name = "dangnhap";
+            Name = "Dangnhap";
             Text = "dn";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();

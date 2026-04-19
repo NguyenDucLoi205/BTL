@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,9 +8,9 @@ using System.Windows.Forms;
 
 namespace BTL
 {
-    public partial class dangnhap : Form
+    public partial class Dangnhap : Form
     {
-        public dangnhap()
+        public Dangnhap()
         {
             InitializeComponent();
         }

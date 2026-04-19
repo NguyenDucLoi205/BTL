@@ -1,6 +1,6 @@
-﻿namespace BTL
+namespace BTL
 {
-    partial class Dangnhap
+    partial class TrangChu
     {
         /// <summary>
         /// Required designer variable.
@@ -124,7 +124,7 @@
             pictureBox2.TabIndex = 6;
             pictureBox2.TabStop = false;
             // 
-            // Dangnhap
+            // TrangChu
             // 
            
             panel1.ResumeLayout(false);
