@@ -1,0 +1,43 @@
+## [ Visual Studio ]
+*.swp
+*.*~
+none
+MSVC/
+*.ncb
+*.user
+*.userosscache
+*.sln.docstates
+
+## [ Build Results ]
+[Bb]in/
+[Oo]bj/
+[Aa]rm/
+[Aa]rm64/
+[Xx]64/
+[Xx]86/
+*.dll
+*.exe
+*.pdb
+*.appx
+*.appxbundle
+*.appxrecipe
+
+## [ User-specific files ]
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## [ Visual Studio 2015/2017/2019/2022 cache/options ]
+.vs/
+
+## [ Packages ]
+*.nupkg
+packages/
+
+## [ Log files ]
+*.log
+
+## [ ResX (Tùy chọn) ]
+# Nếu mày không muốn đẩy các file resource được auto-generate
+# App.config.user
