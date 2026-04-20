@@ -97,7 +97,6 @@ namespace BTL
             Column3 = new DataGridViewTextBoxColumn();
             Column4 = new DataGridViewTextBoxColumn();
             Column5 = new DataGridViewTextBoxColumn();
-            Column17 = new DataGridViewTextBoxColumn();
             Column6 = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
@@ -629,13 +628,14 @@ namespace BTL
             dataGridView2.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             dataGridView2.BackgroundColor = SystemColors.Control;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5, Column17, Column6 });
+            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5, Column6 });
             dataGridView2.Location = new Point(761, 80);
             dataGridView2.Name = "dataGridView2";
             dataGridView2.RowHeadersWidth = 51;
             dataGridView2.Size = new Size(667, 246);
             dataGridView2.TabIndex = 65;
             dataGridView2.CellContentClick += dataGridView2_CellContentClick;
+            dataGridView2.SelectionChanged += dataGridView2_SelectionChanged;
             // 
             // dataGridView3
             // 
@@ -643,19 +643,19 @@ namespace BTL
             dataGridView3.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             dataGridView3.BackgroundColor = SystemColors.Control;
             dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView3.Columns.AddRange(new DataGridViewColumn[] { Column10, Column8, Column7, Column9, Column11, Column12, Column13, Column14, Column15, Column16 });
+            dataGridView3.Columns.AddRange(new DataGridViewColumn[] { Column7, Column8, Column9, Column10, Column11, Column12, Column13, Column14, Column15, Column16 });
             dataGridView3.Location = new Point(764, 329);
             dataGridView3.Name = "dataGridView3";
             dataGridView3.RowHeadersWidth = 51;
             dataGridView3.Size = new Size(667, 246);
             dataGridView3.TabIndex = 66;
             // 
-            // Column10
+            // Column7
             // 
-            Column10.HeaderText = "Ma_Gioi_Tinh";
-            Column10.MinimumWidth = 6;
-            Column10.Name = "Column10";
-            Column10.Width = 126;
+            Column7.HeaderText = "Ma_Gioi_Tinh";
+            Column7.MinimumWidth = 6;
+            Column7.Name = "Column7";
+            Column7.Width = 126;
             // 
             // Column8
             // 
@@ -664,19 +664,19 @@ namespace BTL
             Column8.Name = "Column8";
             Column8.Width = 93;
             // 
-            // Column7
-            // 
-            Column7.HeaderText = "Ma_SP";
-            Column7.MinimumWidth = 6;
-            Column7.Name = "Column7";
-            Column7.Width = 81;
-            // 
             // Column9
             // 
-            Column9.HeaderText = "Ma_Bien_The";
+            Column9.HeaderText = "Ma_SP";
             Column9.MinimumWidth = 6;
             Column9.Name = "Column9";
-            Column9.Width = 124;
+            Column9.Width = 81;
+            // 
+            // Column10
+            // 
+            Column10.HeaderText = "Ma_Bien_The";
+            Column10.MinimumWidth = 6;
+            Column10.Name = "Column10";
+            Column10.Width = 124;
             // 
             // Column11
             // 
@@ -722,7 +722,7 @@ namespace BTL
             // 
             // Column1
             // 
-            Column1.HeaderText = "Ma_hop_Dong";
+            Column1.HeaderText = "Ma_Hop_Dong";
             Column1.MinimumWidth = 6;
             Column1.Name = "Column1";
             Column1.Width = 134;
@@ -750,17 +750,10 @@ namespace BTL
             // 
             // Column5
             // 
-            Column5.HeaderText = "Ma_Khach_Hang";
+            Column5.HeaderText = "Tong_Nhan_Vien";
             Column5.MinimumWidth = 6;
             Column5.Name = "Column5";
             Column5.Width = 147;
-            // 
-            // Column17
-            // 
-            Column17.HeaderText = "Ten_Khach_Hang";
-            Column17.MinimumWidth = 6;
-            Column17.Name = "Column17";
-            Column17.Width = 149;
             // 
             // Column6
             // 
@@ -867,7 +860,6 @@ namespace BTL
         private DataGridViewTextBoxColumn Column3;
         private DataGridViewTextBoxColumn Column4;
         private DataGridViewTextBoxColumn Column5;
-        private DataGridViewTextBoxColumn Column17;
         private DataGridViewTextBoxColumn Column6;
     }
 }

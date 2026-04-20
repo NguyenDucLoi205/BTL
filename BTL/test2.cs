@@ -12,41 +12,26 @@ namespace BTL
         private SqlConnection? sqlCon;
         private string strCon = @"Data Source=NguyenLoi;Initial Catalog=LUXURY_BOUTIQUE;Integrated Security=True;TrustServerCertificate=True";
 
-
         public Test2()
         {
             InitializeComponent();
 
-            // Gán sự kiện cho các nút
-            button2.Click += new EventHandler(btnThem_Click);   // Thêm
-            button3.Click += new EventHandler(btnXoa_Click);    // Xoá
-            button4.Click += new EventHandler(btnHuy_Click);    // Huỷ
-            button5.Click += new EventHandler(btnChinhSua_Click); // Chỉnh Sửa
-            button6.Click += new EventHandler(btnLamMoi_Click); // Làm Mới
+            button2.Click += new EventHandler(btnThem_Click);
+            button3.Click += new EventHandler(btnXoa_Click);
+            button4.Click += new EventHandler(btnHuy_Click);
+            button5.Click += new EventHandler(btnChinhSua_Click);
+            button6.Click += new EventHandler(btnLamMoi_Click);
 
-            // Mặc định: khoá các ô nhập liệu sản phẩm khi chưa nhấn Thêm hoặc Chỉnh Sửa
-            // Mặc định: khoá các ô nhập liệu sản phẩm khi chưa nhấn Thêm hoặc Chỉnh Sửa
             SetFormReadOnly(true);
 
-            // Ensure product add button is wired (designer also hooks it) — defensive
-           uct add button is wired (designer also hooks it) — defensive
-            try
-            {
-                if (buttonAddProduct != null)
-                    buttonAddProduct.Click += AddProductButton_Click;
-            }
-            catch { }
-
-            // Hook selection changed to show products for selected invoice
-            try { dataGridView1.SelectionChanged += DataGridView1_SelectionChanged; } catch { }
+            try { dataGridView2.SelectionChanged += DataGridView2_SelectionChanged; } catch { }
         }
 
-        private void DataGridView1_SelectionChanged(object? sender, EventArgs e)
+        private void DataGridView2_SelectionChanged(object? sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count == 0) return;
-            var row = dataGridView1.SelectedRows[0];
+            if (dataGridView2.SelectedRows.Count == 0) return;
+            var row = dataGridView2.SelectedRows[0];
 
-            // --- Điền thông tin Hóa Đơn vào các TextBox ---
             try
             {
                 textBox1.Text = row.Cells["Ma_Hop_Dong"]?.Value?.ToString() ?? "";
@@ -55,7 +40,6 @@ namespace BTL
                 textBox2.Text = row.Cells["Ten_Khach_Hang"]?.Value?.ToString() ?? "";
                 textBox3.Text = row.Cells["So_Dien_Thoai"]?.Value?.ToString() ?? "";
 
-                // Ngày nhập
                 var ngayVal = row.Cells["Ngay_Nhap"]?.Value;
                 if (ngayVal != null && ngayVal != DBNull.Value)
                 {
@@ -65,29 +49,23 @@ namespace BTL
             }
             catch { }
 
-            // --- Lấy Mã Hợp Đồng để load sản phẩm ---
             var ma = textBox1.Text.Trim();
             if (!string.IsNullOrEmpty(ma))
             {
                 ShowProductsForInvoice(ma);
-                DieuDienThongTinSanPham(ma); // Điền sản phẩm đầu tiên ra các ô
+                DieuDienThongTinSanPham(ma);
             }
         }
 
-        /// <summary>
-        /// Điền thông tin sản phẩm đầu tiên của hóa đơn ra các ô nhập liệu bên trái
-        /// </summary>
         private void DieuDienThongTinSanPham(string maHopDong)
         {
             string[] queries = new string[]
             {
-                // Bảng chi tiết hóa đơn JOIN với San_Pham
-                @"SELECT TOP 1 sp.Ma_San_Pham, sp.Loai_Do, sp.Loai_San_Pham, sp.Ten_San_Pham, sp.Mo_Ta, sp.Mau_Sac, sp.Kich_Co, sp.Chat_Lieu, c.So_Luong, c.Gia FROM Chi_Tiet_Hoa_Don c INNER JOIN San_Pham sp ON c.Ma_San_Pham = sp.Ma_San_Pham WHERE c.Ma_Hop_Dong = @ma",
-                @"SELECT TOP 1 sp.Ma_San_Pham, sp.Loai_Do, sp.Loai_San_Pham, sp.Ten_San_Pham, sp.Mo_Ta, sp.Mau_Sac, sp.Kich_Co, sp.Chat_Lieu, c.So_Luong, c.Gia FROM CT_Hoa_Don c INNER JOIN San_Pham sp ON c.Ma_San_Pham = sp.Ma_San_Pham WHERE c.Ma_Hop_Dong = @ma",
-                @"SELECT TOP 1 sp.Ma_San_Pham, sp.Loai_Do, sp.Loai_San_Pham, sp.Ten_San_Pham, sp.Mo_Ta, sp.Mau_Sac, sp.Kich_Co, sp.Chat_Lieu, c.So_Luong, c.Gia FROM Hoa_Don_Chi_Tiet c INNER JOIN San_Pham sp ON c.Ma_San_Pham = sp.Ma_San_Pham WHERE c.Ma_Hop_Dong = @ma",
-                @"SELECT TOP 1 sp.Ma_San_Pham, sp.Loai_Do, sp.Loai_San_Pham, sp.Ten_San_Pham, sp.Mo_Ta, sp.Mau_Sac, sp.Kich_Co, sp.Chat_Lieu, c.So_Luong, c.Gia FROM CTHD c INNER JOIN San_Pham sp ON c.Ma_San_Pham = sp.Ma_San_Pham WHERE c.Ma_Hop_Dong = @ma",
-                // Fallback: San_Pham có cột Ma_Hop_Dong trực tiếp
-                @"SELECT TOP 1 Ma_San_Pham, Loai_Do, Loai_San_Pham, Ten_San_Pham, Mo_Ta, Mau_Sac, Kich_Co, Chat_Lieu, So_Luong, Gia FROM San_Pham WHERE Ma_Hop_Dong = @ma"
+                @"SELECT TOP 1 sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM Chi_Tiet_Hoa_Don c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
+                @"SELECT TOP 1 sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM CT_Hoa_Don c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
+                @"SELECT TOP 1 sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM Hoa_Don_Chi_Tiet c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
+                @"SELECT TOP 1 sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM CTHD c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
+                @"SELECT TOP 1 Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The, Ten_San_Pham, Chat_Lieu, Size, Mau_Sac, So_Luong, Gia_San_Pham FROM San_Pham WHERE Ma_Hop_Dong = @ma"
             };
 
             try
@@ -102,51 +80,37 @@ namespace BTL
                         SqlDataReader reader = cmd.ExecuteReader();
                         if (reader.Read())
                         {
-                            // Mã sản phẩm
-                            textBox7.Text = reader["Ma_San_Pham"]?.ToString() ?? "";
+                            textBox7.Text = reader["Ma_SP"]?.ToString() ?? "";
 
-                            // Loại Đồ -> RadioButton
-                            string loaiDo = reader["Loai_Do"]?.ToString() ?? "";
-                            radioButton1.Checked = loaiDo == "Nam";
-                            radioButton2.Checked = loaiDo == "Nữ";
-                            radioButton3.Checked = loaiDo == "Unisex";
+                            string gioiTinh = reader["Ma_Gioi_Tinh"]?.ToString() ?? "";
+                            radioButton1.Checked = gioiTinh == "Nam";
+                            radioButton2.Checked = gioiTinh == "Nữ";
+                            radioButton3.Checked = gioiTinh == "Unisex";
 
-                            // Loại sản phẩm
-                            textBox11.Text = reader["Loai_San_Pham"]?.ToString() ?? "";
-
-                            // Tên sản phẩm
+                            textBox11.Text = reader["Ma_Loai"]?.ToString() ?? "";
                             textBox10.Text = reader["Ten_San_Pham"]?.ToString() ?? "";
-
-                            // Mô tả
-                            textBox9.Text = reader["Mo_Ta"]?.ToString() ?? "";
-
-                            // Màu sắc
+                            textBox9.Text = "";
                             textBox13.Text = reader["Mau_Sac"]?.ToString() ?? "";
 
-                            // Kích cỡ
-                            string kichCo = reader["Kich_Co"]?.ToString() ?? "";
+                            string kichCo = reader["Size"]?.ToString() ?? "";
                             int idx = comboBox1.Items.IndexOf(kichCo);
                             comboBox1.SelectedIndex = idx >= 0 ? idx : -1;
 
-                            // Chất liệu
                             textBox8.Text = reader["Chat_Lieu"]?.ToString() ?? "";
 
-                            // Số lượng
                             if (decimal.TryParse(reader["So_Luong"]?.ToString(), out decimal sl))
                                 numericUpDown2.Value = Math.Min(sl, numericUpDown2.Maximum);
 
-                            // Giá
-                            textBox6.Text = reader["Gia"]?.ToString() ?? "";
+                            textBox6.Text = reader["Gia_San_Pham"]?.ToString() ?? "";
 
                             reader.Close();
-                            return; // Đã điền xong, thoát
+                            return;
                         }
                         reader.Close();
                     }
-                    catch { /* thử tên bảng tiếp theo */ }
+                    catch { }
                 }
 
-                // Nếu không tìm thấy chi tiết, xóa trắng các ô sản phẩm
                 textBox7.Clear(); textBox11.Clear(); textBox10.Clear();
                 textBox9.Clear(); textBox13.Clear(); textBox8.Clear();
                 textBox6.Clear();
@@ -163,13 +127,11 @@ namespace BTL
                 MoKetNoi();
                 string[] queries = new string[]
                 {
-                    // common detail table names JOIN San_Pham
-                    @"SELECT sp.Ma_San_Pham AS [Mã SP], sp.Loai_Do AS [Loại Đồ], sp.Loai_San_Pham AS [Loại SP], sp.Ten_San_Pham AS [Tên SP], sp.Mo_Ta AS [Mô Tả], sp.Mau_Sac AS [Màu Sắc], sp.Kich_Co AS [SIZE], sp.Chat_Lieu AS [Chất Liệu], c.So_Luong AS [SL], c.Gia AS [Giá] FROM Chi_Tiet_Hoa_Don c INNER JOIN San_Pham sp ON c.Ma_San_Pham = sp.Ma_San_Pham WHERE c.Ma_Hop_Dong = @ma",
-                    @"SELECT sp.Ma_San_Pham AS [Mã SP], sp.Loai_Do AS [Loại Đồ], sp.Loai_San_Pham AS [Loại SP], sp.Ten_San_Pham AS [Tên SP], sp.Mo_Ta AS [Mô Tả], sp.Mau_Sac AS [Màu Sắc], sp.Kich_Co AS [SIZE], sp.Chat_Lieu AS [Chất Liệu], c.So_Luong AS [SL], c.Gia AS [Giá] FROM CT_Hoa_Don c INNER JOIN San_Pham sp ON c.Ma_San_Pham = sp.Ma_San_Pham WHERE c.Ma_Hop_Dong = @ma",
-                    @"SELECT sp.Ma_San_Pham AS [Mã SP], sp.Loai_Do AS [Loại Đồ], sp.Loai_San_Pham AS [Loại SP], sp.Ten_San_Pham AS [Tên SP], sp.Mo_Ta AS [Mô Tả], sp.Mau_Sac AS [Màu Sắc], sp.Kich_Co AS [SIZE], sp.Chat_Lieu AS [Chất Liệu], c.So_Luong AS [SL], c.Gia AS [Giá] FROM Hoa_Don_Chi_Tiet c INNER JOIN San_Pham sp ON c.Ma_San_Pham = sp.Ma_San_Pham WHERE c.Ma_Hop_Dong = @ma",
-                    @"SELECT sp.Ma_San_Pham AS [Mã SP], sp.Loai_Do AS [Loại Đồ], sp.Loai_San_Pham AS [Loại SP], sp.Ten_San_Pham AS [Tên SP], sp.Mo_Ta AS [Mô Tả], sp.Mau_Sac AS [Màu Sắc], sp.Kich_Co AS [SIZE], sp.Chat_Lieu AS [Chất Liệu], c.So_Luong AS [SL], c.Gia AS [Giá] FROM CTHD c INNER JOIN San_Pham sp ON c.Ma_San_Pham = sp.Ma_San_Pham WHERE c.Ma_Hop_Dong = @ma",
-                    // Fallback: San_Pham có cột Ma_Hop_Dong trực tiếp
-                    @"SELECT Ma_San_Pham AS [Mã SP], Loai_Do AS [Loại Đồ], Loai_San_Pham AS [Loại SP], Ten_San_Pham AS [Tên SP], Mo_Ta AS [Mô Tả], Mau_Sac AS [Màu Sắc], Kich_Co AS [SIZE], Chat_Lieu AS [Chất Liệu], So_Luong AS [SL], Gia AS [Giá] FROM San_Pham WHERE Ma_Hop_Dong = @ma"
+                    @"SELECT sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM Chi_Tiet_Hoa_Don c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
+                    @"SELECT sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM CT_Hoa_Don c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
+                    @"SELECT sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM Hoa_Don_Chi_Tiet c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
+                    @"SELECT sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM CTHD c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
+                    @"SELECT Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The, Ten_San_Pham, Chat_Lieu, Size, Mau_Sac, So_Luong, Gia_San_Pham FROM San_Pham WHERE Ma_Hop_Dong = @ma"
                 };
 
                 foreach (var q in queries)
@@ -182,23 +144,21 @@ namespace BTL
                         da.Fill(dt);
                         if (dt.Rows.Count > 0)
                         {
-                            dataGridViewProducts.DataSource = dt;
-                            dataGridViewProducts.AllowUserToAddRows = false;
-                            dataGridViewProducts.RowHeadersVisible = false;
-                            dataGridViewProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                            dataGridView3.DataSource = dt;
+                            dataGridView3.AllowUserToAddRows = false;
+                            dataGridView3.RowHeadersVisible = false;
+                            dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                             return;
                         }
                     }
-                    catch { /* try next query name */ }
+                    catch { }
                 }
 
-                // If none found, clear products grid
-                dataGridViewProducts.DataSource = null;
+                dataGridView3.DataSource = null;
             }
-            catch { dataGridViewProducts.DataSource = null; }
+            catch { dataGridView3.DataSource = null; }
         }
 
-        // Nút Thêm Sản Phẩm (riêng)
         private void AddProductButton_Click(object? sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(textBox7.Text))
@@ -212,28 +172,25 @@ namespace BTL
                 MoKetNoi();
                 string gioiTinh = radioButton2.Checked ? "Nữ" : radioButton3.Checked ? "Unisex" : "Nam";
                 string sqlSP = @"INSERT INTO San_Pham
-                        (Ma_San_Pham, Loai_Do, Loai_San_Pham, Ten_San_Pham, Mo_Ta, Mau_Sac, Kich_Co, Chat_Lieu, So_Luong, Gia)
-                        VALUES (@maSP, @loaiDo, @loaiSP, @tenSP, @moTa, @mauSac, @kichCo, @chatLieu, @soLuong, @gia)";
+                        (Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The, Ten_San_Pham, Chat_Lieu, Size, Mau_Sac, So_Luong, Gia_San_Pham)
+                        VALUES (@gioiTinh, @maLoai, @maSP, @maBienThe, @tenSP, @chatLieu, @size, @mauSac, @soLuong, @gia)";
 
                 SqlCommand cmdSP = new SqlCommand(sqlSP, sqlCon);
+                cmdSP.Parameters.AddWithValue("@gioiTinh", gioiTinh);
+                cmdSP.Parameters.AddWithValue("@maLoai", textBox11.Text.Trim());
                 cmdSP.Parameters.AddWithValue("@maSP", textBox7.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@loaiDo", gioiTinh);
-                cmdSP.Parameters.AddWithValue("@loaiSP", textBox11.Text.Trim());
+                cmdSP.Parameters.AddWithValue("@maBienThe", textBox7.Text.Trim());
                 cmdSP.Parameters.AddWithValue("@tenSP", textBox10.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@moTa", textBox9.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@mauSac", textBox13.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@kichCo", comboBox1.Text);
                 cmdSP.Parameters.AddWithValue("@chatLieu", textBox8.Text.Trim());
+                cmdSP.Parameters.AddWithValue("@size", comboBox1.Text);
+                cmdSP.Parameters.AddWithValue("@mauSac", textBox13.Text.Trim());
                 cmdSP.Parameters.AddWithValue("@soLuong", numericUpDown2.Value);
                 decimal gia = 0; decimal.TryParse(textBox6.Text.Trim(), out gia);
                 cmdSP.Parameters.AddWithValue("@gia", gia);
 
                 cmdSP.ExecuteNonQuery();
-
                 MessageBox.Show("Đã thêm sản phẩm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                // Cập nhật products grid
-                try { LoadData(); } catch { }
+                LoadData();
             }
             catch (Exception ex)
             {
@@ -258,26 +215,26 @@ namespace BTL
                 SqlDataAdapter adapter = new SqlDataAdapter(query, sqlCon);
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
-                dataGridView1.DataSource = dt;
-                // Không hiển thị hàng thêm mới (dấu *) và ẩn row header nếu không cần
-                dataGridView1.AllowUserToAddRows = false;
-                dataGridView1.RowHeadersVisible = false;
-                // Tùy chọn: cho các cột rộng đều
-                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dataGridView2.DataSource = dt;
+                dataGridView2.AllowUserToAddRows = false;
+                dataGridView2.RowHeadersVisible = false;
+                dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-                // Load products into product grid
                 try
                 {
-                    string q2 = "SELECT Ma_San_Pham AS [Mã SP], Loai_Do AS [Loại Đồ], Loai_San_Pham AS [Loại SP], Ten_San_Pham AS [Tên SP], Mo_Ta AS [Mô Tả], Mau_Sac AS [Màu Sắc], Kich_Co AS [SIZE], Chat_Lieu AS [Chất Liệu], So_Luong AS [SL], Gia AS [Giá] FROM San_Pham";
+                    string q2 = @"SELECT
+                        Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The,
+                        Ten_San_Pham, Chat_Lieu, Size, Mau_Sac,
+                        So_Luong, Gia_San_Pham FROM San_Pham";
                     SqlDataAdapter da2 = new SqlDataAdapter(q2, sqlCon);
                     DataTable dt2 = new DataTable();
                     da2.Fill(dt2);
-                    dataGridViewProducts.DataSource = dt2;
-                    dataGridViewProducts.AllowUserToAddRows = false;
-                    dataGridViewProducts.RowHeadersVisible = false;
-                    dataGridViewProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    dataGridView3.DataSource = dt2;
+                    dataGridView3.AllowUserToAddRows = false;
+                    dataGridView3.RowHeadersVisible = false;
+                    dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 }
-                catch { /* bỏ qua nếu không có bảng San_Pham */ }
+                catch { }
             }
             catch (Exception ex)
             {
@@ -313,38 +270,28 @@ namespace BTL
             TinhTongTien();
         }
 
-        // ===================== KHOÁ / MỞ KHOÁ FORM =====================
-        /// <summary>
-        /// readOnly = true: khoá tất cả ô nhập liệu sản phẩm
-        /// readOnly = false: mở khoá để nhập/sửa
-        /// </summary>
         private void SetFormReadOnly(bool readOnly)
         {
             bool enable = !readOnly;
-
-            // Thông tin hóa đơn
-            textBox1.ReadOnly = readOnly;  // Mã hợp đồng
-            textBox2.ReadOnly = readOnly;  // Tên khách hàng
-            textBox3.ReadOnly = readOnly;  // Số điện thoại
-            textBox4.ReadOnly = readOnly;  // Mã nhân viên
-            textBox5.ReadOnly = readOnly;  // Tên nhân viên
+            textBox1.ReadOnly = readOnly;
+            textBox2.ReadOnly = readOnly;
+            textBox3.ReadOnly = readOnly;
+            textBox4.ReadOnly = readOnly;
+            textBox5.ReadOnly = readOnly;
             dateTimePicker1.Enabled = enable;
-
-            // Thông tin sản phẩm
-            textBox7.ReadOnly = readOnly;  // Mã sản phẩm
-            textBox11.ReadOnly = readOnly; // Loại sản phẩm
-            textBox10.ReadOnly = readOnly; // Tên sản phẩm
-            textBox9.ReadOnly = readOnly;  // Mô tả
-            textBox13.ReadOnly = readOnly; // Màu sắc
-            comboBox1.Enabled = enable;    // Kích cỡ
-            textBox8.ReadOnly = readOnly;  // Chất liệu
-            numericUpDown2.ReadOnly = readOnly; // Số lượng
-            textBox6.ReadOnly = readOnly;  // Giá
-
+            textBox7.ReadOnly = readOnly;
+            textBox11.ReadOnly = readOnly;
+            textBox10.ReadOnly = readOnly;
+            textBox9.ReadOnly = readOnly;
+            textBox13.ReadOnly = readOnly;
+            comboBox1.Enabled = enable;
+            textBox8.ReadOnly = readOnly;
+            numericUpDown2.ReadOnly = readOnly;
+            textBox6.ReadOnly = readOnly;
             radioButton1.Enabled = enable;
             radioButton2.Enabled = enable;
             radioButton3.Enabled = enable;
-            button1.Enabled = enable; // Thêm ảnh
+            button1.Enabled = enable;
         }
 
         // ===================== NÚT THÊM (button2) =====================
@@ -352,23 +299,20 @@ namespace BTL
         {
             if (button2.Text == "Thêm")
             {
-                // Trạng thái chuẩn bị nhập
                 SetFormReadOnly(false);
                 LamTrong();
                 button2.Text = "Lưu";
-                button5.Enabled = false; // Khóa nút Chỉnh Sửa khi đang thêm
-                textBox1.Focus(); // Cho con trỏ vào ô đầu tiên
+                button5.Enabled = false;
+                textBox1.Focus();
             }
             else
             {
-                // Trạng thái đang là "Lưu" -> Thực hiện insert DB
                 ThemDuLieu();
             }
         }
 
         private void ThemDuLieu()
         {
-            // Kiểm tra dữ liệu bắt buộc
             if (string.IsNullOrWhiteSpace(textBox1.Text))
             {
                 MessageBox.Show("Vui lòng nhập Mã Hợp Đồng!", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -378,14 +322,11 @@ namespace BTL
             try
             {
                 MoKetNoi();
-
-                // Xác định giới tính
                 string gioiTinh = "Nam";
                 if (radioButton2.Checked) gioiTinh = "Nữ";
                 else if (radioButton3.Checked) gioiTinh = "Unisex";
 
-                // === BƯỚC 1: Thêm hóa đơn ===
-                string sqlHoaDon = @"INSERT INTO Hoa_Don 
+                string sqlHoaDon = @"INSERT INTO Hoa_Don
                     (Ma_Hop_Dong, Ngay_Nhap, Ma_Nhan_Vien, Ten_Khach_Hang, So_Dien_Thoai, Ten_Nhan_Vien, Tong_Tien_Thanh_Toan)
                     VALUES (@ma, @ngay, @manv, @tenKH, @sdt, @tenNV, @tongtien)";
 
@@ -400,59 +341,53 @@ namespace BTL
                 decimal tongTien = 0;
                 decimal.TryParse(textBox6.Text.Trim(), out tongTien);
                 cmdHD.Parameters.AddWithValue("@tongtien", tongTien);
-
                 cmdHD.ExecuteNonQuery();
 
-                // === BƯỚC 2: Thêm sản phẩm (nếu có mã sản phẩm) ===
                 if (!string.IsNullOrWhiteSpace(textBox7.Text))
                 {
                     string sqlSP = @"INSERT INTO San_Pham
-                        (Ma_San_Pham, Loai_Do, Loai_San_Pham, Ten_San_Pham, Mo_Ta, Mau_Sac, Kich_Co, Chat_Lieu, So_Luong, Gia)
-                        VALUES (@maSP, @loaiDo, @loaiSP, @tenSP, @moTa, @mauSac, @kichCo, @chatLieu, @soLuong, @gia)";
+                        (Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The, Ten_San_Pham, Chat_Lieu, Size, Mau_Sac, So_Luong, Gia_San_Pham)
+                        VALUES (@gioiTinh, @maLoai, @maSP, @maBienThe, @tenSP, @chatLieu, @size, @mauSac, @soLuong, @gia)";
 
                     SqlCommand cmdSP = new SqlCommand(sqlSP, sqlCon);
+                    cmdSP.Parameters.AddWithValue("@gioiTinh", gioiTinh);
+                    cmdSP.Parameters.AddWithValue("@maLoai", textBox11.Text.Trim());
                     cmdSP.Parameters.AddWithValue("@maSP", textBox7.Text.Trim());
-                    cmdSP.Parameters.AddWithValue("@loaiDo", gioiTinh);
-                    cmdSP.Parameters.AddWithValue("@loaiSP", textBox11.Text.Trim());
+                    cmdSP.Parameters.AddWithValue("@maBienThe", textBox7.Text.Trim());
                     cmdSP.Parameters.AddWithValue("@tenSP", textBox10.Text.Trim());
-                    cmdSP.Parameters.AddWithValue("@moTa", textBox9.Text.Trim());
-                    cmdSP.Parameters.AddWithValue("@mauSac", textBox13.Text.Trim());
-                    cmdSP.Parameters.AddWithValue("@kichCo", comboBox1.Text);
                     cmdSP.Parameters.AddWithValue("@chatLieu", textBox8.Text.Trim());
+                    cmdSP.Parameters.AddWithValue("@size", comboBox1.Text);
+                    cmdSP.Parameters.AddWithValue("@mauSac", textBox13.Text.Trim());
                     cmdSP.Parameters.AddWithValue("@soLuong", numericUpDown2.Value);
                     cmdSP.Parameters.AddWithValue("@gia", tongTien);
 
                     try
                     {
                         cmdSP.ExecuteNonQuery();
-
-                        // Cập nhật UI ngay: nếu products grid đang dùng DataTable làm DataSource thì thêm hàng mới
                         try
                         {
-                            if (dataGridViewProducts.DataSource is DataTable dtProducts)
+                            if (dataGridView3.DataSource is DataTable dtProducts)
                             {
                                 DataRow nr = dtProducts.NewRow();
-                                nr["Mã SP"] = textBox7.Text.Trim();
-                                nr["Loại Đồ"] = gioiTinh;
-                                nr["Loại SP"] = textBox11.Text.Trim();
-                                nr["Tên SP"] = textBox10.Text.Trim();
-                                nr["Mô Tả"] = textBox9.Text.Trim();
-                                nr["Màu Sắc"] = textBox13.Text.Trim();
-                                nr["SIZE"] = comboBox1.Text;
-                                nr["Chất Liệu"] = textBox8.Text.Trim();
-                                nr["SL"] = numericUpDown2.Value;
-                                nr["Giá"] = tongTien;
+                                nr["Ma_Gioi_Tinh"] = gioiTinh;
+                                nr["Ma_Loai"] = textBox11.Text.Trim();
+                                nr["Ma_SP"] = textBox7.Text.Trim();
+                                nr["Ma_Bien_The"] = textBox7.Text.Trim();
+                                nr["Ten_San_Pham"] = textBox10.Text.Trim();
+                                nr["Chat_Lieu"] = textBox8.Text.Trim();
+                                nr["Size"] = comboBox1.Text;
+                                nr["Mau_Sac"] = textBox13.Text.Trim();
+                                nr["So_Luong"] = numericUpDown2.Value;
+                                nr["Gia_San_Pham"] = tongTien;
                                 dtProducts.Rows.Add(nr);
                             }
                         }
                         catch { }
                     }
-                    catch { /* Bỏ qua nếu bảng San_Pham không tồn tại */ }
+                    catch { }
                 }
 
                 MessageBox.Show("Đã thêm thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                // Reset về trạng thái khoá
                 DungChinhSua();
                 LoadData();
                 TinhTongTien();
@@ -482,9 +417,8 @@ namespace BTL
                     SqlCommand cmd = new SqlCommand(sqlXoa, sqlCon);
                     cmd.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
                     cmd.ExecuteNonQuery();
-
                     MessageBox.Show("Xoá thành công!");
-                    btnLamMoi_Click(null, null); // Reset lại form sau khi xoá
+                    btnLamMoi_Click(null, null);
                 }
                 catch (Exception ex)
                 {
@@ -504,9 +438,9 @@ namespace BTL
                     return;
                 }
                 SetFormReadOnly(false);
-                textBox1.ReadOnly = true; // Không cho sửa Khóa chính (Mã hợp đồng)
+                textBox1.ReadOnly = true;
                 button5.Text = "Cập Nhật";
-                button2.Enabled = false; // Khóa nút Thêm khi đang sửa
+                button2.Enabled = false;
             }
             else
             {
@@ -525,7 +459,6 @@ namespace BTL
             try
             {
                 MoKetNoi();
-
                 string sqlUpdate = @"UPDATE Hoa_Don SET
                     Ngay_Nhap = @ngay,
                     Ma_Nhan_Vien = @manv,
@@ -551,7 +484,7 @@ namespace BTL
                 if (rows > 0)
                     MessageBox.Show("Đã lưu chỉnh sửa thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 else
-                    MessageBox.Show("Không tìm thấy hóa đơn để cập nhật. Hãy kiểm tra lại Mã Hợp Đồng.", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Không tìm thấy hóa đơn để cập nhật.", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 DungChinhSua();
                 LoadData();
@@ -566,12 +499,11 @@ namespace BTL
         // ===================== NÚT HUỶ (button4) =====================
         private void btnHuy_Click(object? sender, EventArgs e)
         {
-            DungChinhSua(); // Khóa form lại
+            DungChinhSua();
             button2.Enabled = true;
             button5.Enabled = true;
             button2.Text = "Thêm";
             button5.Text = "Chỉnh Sửa";
-            // Tải lại dữ liệu cũ nếu cần
             LoadData();
         }
 
@@ -588,34 +520,22 @@ namespace BTL
             TinhTongTien();
         }
 
-        // ===================== HÀM PHỤ TRỢ =====================
-
-        /// <summary>
-        /// Kết thúc chế độ nhập/sửa, khoá form và reset nút
-        /// </summary>
         private void DungChinhSua()
         {
             SetFormReadOnly(true);
         }
 
-        /// <summary>
-        /// Xoá trắng tất cả ô nhập liệu
-        /// </summary>
         private void LamTrong()
         {
-            // Xóa hết chữ trong TextBox
             foreach (Control c in this.Controls)
             {
                 if (c is TextBox) ((TextBox)c).Clear();
             }
-            // Riêng các ô trong GroupBox/Panel nếu có
             textBox1.Clear(); textBox2.Clear(); textBox3.Clear(); textBox4.Clear();
             textBox5.Clear(); textBox6.Clear(); textBox7.Clear(); textBox8.Clear();
             textBox9.Clear(); textBox10.Clear(); textBox11.Clear(); textBox13.Clear();
 
             numericUpDown2.Value = 0;
-
-            // Xử lý ComboBox Kích cỡ
             if (comboBox1.Items.Count > 0)
                 comboBox1.SelectedIndex = 0;
             else
@@ -626,7 +546,6 @@ namespace BTL
             dateTimePicker1.Value = DateTime.Now;
         }
 
-        // ===================== NÚT THÊM ẢNH (button1) =====================
         private void btnChonAnh_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFile = new OpenFileDialog();
@@ -645,12 +564,10 @@ namespace BTL
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
 
         private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
         }
     }
 }
