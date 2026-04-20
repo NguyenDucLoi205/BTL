@@ -24,190 +24,6 @@ namespace BTL
             button1.Click += new EventHandler(btnChonSanPham_Click);
 
             SetFormReadOnly(true);
-
-            try { dataGridView2.SelectionChanged += DataGridView2_SelectionChanged; } catch { }
-        }
-
-        private void DataGridView2_SelectionChanged(object? sender, EventArgs e)
-        {
-            if (dataGridView2.SelectedRows.Count == 0) return;
-            var row = dataGridView2.SelectedRows[0];
-
-            try
-            {
-                textBox1.Text = row.Cells["Column1"]?.Value?.ToString() ?? "";
-                textBox4.Text = row.Cells["Column3"]?.Value?.ToString() ?? "";
-                textBox5.Text = row.Cells["Column4"]?.Value?.ToString() ?? "";
-                textBox2.Text = row.Cells["Column5"]?.Value?.ToString() ?? "";
-                textBox3.Text = "";
-
-                var ngayVal = row.Cells["Column2"]?.Value;
-                if (ngayVal != null && ngayVal != DBNull.Value)
-                {
-                    if (DateTime.TryParse(ngayVal.ToString(), out DateTime ngay))
-                        dateTimePicker1.Value = ngay;
-                }
-            }
-            catch { }
-
-            var ma = textBox1.Text.Trim();
-            if (!string.IsNullOrEmpty(ma))
-            {
-                ShowProductsForInvoice(ma);
-                DieuDienThongTinSanPham(ma);
-            }
-        }
-
-        private void DieuDienThongTinSanPham(string maHopDong)
-        {
-            string[] queries = new string[]
-            {
-                @"SELECT TOP 1 sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM Chi_Tiet_Hoa_Don c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
-                @"SELECT TOP 1 sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM CT_Hoa_Don c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
-                @"SELECT TOP 1 sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM Hoa_Don_Chi_Tiet c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
-                @"SELECT TOP 1 sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM CTHD c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
-                @"SELECT TOP 1 Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The, Ten_San_Pham, Chat_Lieu, Size, Mau_Sac, So_Luong, Gia_San_Pham FROM San_Pham WHERE Ma_Hop_Dong = @ma"
-            };
-
-            try
-            {
-                MoKetNoi();
-                foreach (var q in queries)
-                {
-                    try
-                    {
-                        SqlCommand cmd = new SqlCommand(q, sqlCon);
-                        cmd.Parameters.AddWithValue("@ma", maHopDong);
-                        SqlDataReader reader = cmd.ExecuteReader();
-                        if (reader.Read())
-                        {
-                            textBox7.Text = reader["Ma_SP"]?.ToString() ?? "";
-
-                            string gioiTinh = reader["Ma_Gioi_Tinh"]?.ToString() ?? "";
-                            radioButton1.Checked = gioiTinh == "Nam";
-                            radioButton2.Checked = gioiTinh == "Nữ";
-                            radioButton3.Checked = gioiTinh == "Unisex";
-
-                            textBox11.Text = reader["Ma_Loai"]?.ToString() ?? "";
-                            textBox10.Text = reader["Ten_San_Pham"]?.ToString() ?? "";
-                            textBox9.Text = "";
-                            textBox13.Text = reader["Mau_Sac"]?.ToString() ?? "";
-
-                            string kichCo = reader["Size"]?.ToString() ?? "";
-                            int idx = comboBox1.Items.IndexOf(kichCo);
-                            comboBox1.SelectedIndex = idx >= 0 ? idx : -1;
-
-                            textBox8.Text = reader["Chat_Lieu"]?.ToString() ?? "";
-
-                            if (decimal.TryParse(reader["So_Luong"]?.ToString(), out decimal sl))
-                                numericUpDown2.Value = Math.Min(sl, numericUpDown2.Maximum);
-
-                            textBox6.Text = reader["Gia_San_Pham"]?.ToString() ?? "";
-
-                            reader.Close();
-                            return;
-                        }
-                        reader.Close();
-                    }
-                    catch { }
-                }
-
-                textBox7.Clear(); textBox11.Clear(); textBox10.Clear();
-                textBox9.Clear(); textBox13.Clear(); textBox8.Clear();
-                textBox6.Clear();
-                numericUpDown2.Value = 0;
-                radioButton1.Checked = true;
-            }
-            catch { }
-        }
-
-        private void ShowProductsForInvoice(string maHopDong)
-        {
-            try
-            {
-                MoKetNoi();
-                string[] queries = new string[]
-                {
-                    @"SELECT sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM Chi_Tiet_Hoa_Don c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
-                    @"SELECT sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM CT_Hoa_Don c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
-                    @"SELECT sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM Hoa_Don_Chi_Tiet c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
-                    @"SELECT sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The, sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac, c.So_Luong, c.Gia_San_Pham FROM CTHD c INNER JOIN San_Pham sp ON c.Ma_SP = sp.Ma_SP WHERE c.Ma_Hop_Dong = @ma",
-                    @"SELECT Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The, Ten_San_Pham, Chat_Lieu, Size, Mau_Sac, So_Luong, Gia_San_Pham FROM San_Pham WHERE Ma_Hop_Dong = @ma"
-                };
-
-                foreach (var q in queries)
-                {
-                    try
-                    {
-                        SqlCommand cmd = new SqlCommand(q, sqlCon);
-                        cmd.Parameters.AddWithValue("@ma", maHopDong);
-                        SqlDataReader reader = cmd.ExecuteReader();
-
-                        dataGridView3.Rows.Clear();
-                        while (reader.Read())
-                        {
-                            int idx = dataGridView3.Rows.Add();
-                            dataGridView3.Rows[idx].Cells["Column7"].Value = reader["Ma_Gioi_Tinh"];
-                            dataGridView3.Rows[idx].Cells["Column8"].Value = reader["Ma_Loai"];
-                            dataGridView3.Rows[idx].Cells["Column9"].Value = reader["Ma_SP"];
-                            dataGridView3.Rows[idx].Cells["Column10"].Value = reader["Ma_Bien_The"];
-                            dataGridView3.Rows[idx].Cells["Column11"].Value = reader["Ten_San_Pham"];
-                            dataGridView3.Rows[idx].Cells["Column12"].Value = reader["Chat_Lieu"];
-                            dataGridView3.Rows[idx].Cells["Column13"].Value = reader["Size"];
-                            dataGridView3.Rows[idx].Cells["Column14"].Value = reader["Mau_Sac"];
-                            dataGridView3.Rows[idx].Cells["Column15"].Value = reader["So_Luong"];
-                            dataGridView3.Rows[idx].Cells["Column16"].Value = reader["Gia_San_Pham"];
-                        }
-                        reader.Close();
-
-                        if (dataGridView3.Rows.Count > 0)
-                            return;
-                    }
-                    catch { }
-                }
-
-                dataGridView3.Rows.Clear();
-            }
-            catch { dataGridView3.Rows.Clear(); }
-        }
-
-        private void AddProductButton_Click(object? sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(textBox7.Text))
-            {
-                MessageBox.Show("Vui lòng nhập Mã Sản Phẩm!", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            try
-            {
-                MoKetNoi();
-                string gioiTinh = radioButton2.Checked ? "Nữ" : radioButton3.Checked ? "Unisex" : "Nam";
-                string sqlSP = @"INSERT INTO San_Pham
-                        (Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The, Ten_San_Pham, Chat_Lieu, Size, Mau_Sac, So_Luong, Gia_San_Pham)
-                        VALUES (@gioiTinh, @maLoai, @maSP, @maBienThe, @tenSP, @chatLieu, @size, @mauSac, @soLuong, @gia)";
-
-                SqlCommand cmdSP = new SqlCommand(sqlSP, sqlCon);
-                cmdSP.Parameters.AddWithValue("@gioiTinh", gioiTinh);
-                cmdSP.Parameters.AddWithValue("@maLoai", textBox11.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@maSP", textBox7.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@maBienThe", textBox7.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@tenSP", textBox10.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@chatLieu", textBox8.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@size", comboBox1.Text);
-                cmdSP.Parameters.AddWithValue("@mauSac", textBox13.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@soLuong", numericUpDown2.Value);
-                decimal gia = 0; decimal.TryParse(textBox6.Text.Trim(), out gia);
-                cmdSP.Parameters.AddWithValue("@gia", gia);
-
-                cmdSP.ExecuteNonQuery();
-                MessageBox.Show("Đã thêm sản phẩm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadData();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi khi thêm sản phẩm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         // ===================== KẾT NỐI DATABASE =====================
@@ -224,8 +40,10 @@ namespace BTL
             {
                 MoKetNoi();
 
-                // Load Hoa_Don - manually populate rows to use pre-defined columns
-                string query = "SELECT Ma_Hop_Dong, Ngay_Nhap, Ma_Nhan_Vien, Ten_Nhan_Vien, Tong_Nhan_Vien, Tong_Tien_Thanh_Toan FROM Hoa_Don";
+                // Load Hoa_Don
+                string query = @"SELECT Ma_Hop_Dong, Ngay_Nhap, Ma_Nhan_Vien, Ten_Nhan_Vien,
+                                So_Dien_Thoai_KH, Ten_Khach_Hang, Tong_Tien_Thanh_Toan
+                                FROM Hoa_Don";
                 SqlCommand cmd = new SqlCommand(query, sqlCon);
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -237,12 +55,12 @@ namespace BTL
                     dataGridView2.Rows[idx].Cells["Column2"].Value = reader["Ngay_Nhap"];
                     dataGridView2.Rows[idx].Cells["Column3"].Value = reader["Ma_Nhan_Vien"];
                     dataGridView2.Rows[idx].Cells["Column4"].Value = reader["Ten_Nhan_Vien"];
-                    dataGridView2.Rows[idx].Cells["Column5"].Value = reader["Tong_Nhan_Vien"];
+                    dataGridView2.Rows[idx].Cells["Column5"].Value = reader["Ten_Khach_Hang"];
                     dataGridView2.Rows[idx].Cells["Column6"].Value = reader["Tong_Tien_Thanh_Toan"];
                 }
                 reader.Close();
 
-                // Load San_Pham - manually populate rows to use pre-defined columns
+                // Load San_Pham vao dataGridView3
                 try
                 {
                     string q2 = @"SELECT Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The,
@@ -281,19 +99,21 @@ namespace BTL
         {
             try
             {
-                MoKetNoi();
-                string query = "SELECT SUM(Tong_Tien_Thanh_Toan) FROM Hoa_Don";
-                SqlCommand cmd = new SqlCommand(query, sqlCon);
-                object result = cmd.ExecuteScalar();
-
-                if (result != DBNull.Value && result != null)
-                    textBox12.Text = string.Format("{0:N0}", result);
-                else
-                    textBox12.Text = "0";
+                decimal tongTien = 0;
+                foreach (DataGridViewRow row in dataGridView3.Rows)
+                {
+                    if (row.Cells["Column16"].Value != null &&
+                        row.Cells["Column16"].Value != DBNull.Value)
+                    {
+                        if (decimal.TryParse(row.Cells["Column16"].Value.ToString(), out decimal gia))
+                            tongTien += gia;
+                    }
+                }
+                textBox12.Text = string.Format("{0:N0}", tongTien);
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show("Lỗi tính tiền: " + ex.Message);
+                textBox12.Text = "0";
             }
         }
 
@@ -301,31 +121,109 @@ namespace BTL
         private void test2_Load(object sender, EventArgs e)
         {
             LoadData();
-            TinhTongTien();
         }
 
         private void SetFormReadOnly(bool readOnly)
         {
             bool enable = !readOnly;
             textBox1.ReadOnly = readOnly;
-            textBox2.ReadOnly = readOnly;
-            textBox3.ReadOnly = readOnly;
-            textBox4.ReadOnly = readOnly;
-            textBox5.ReadOnly = readOnly;
+            textBox2.ReadOnly = readOnly;  // SĐT KH
+            textBox3.ReadOnly = readOnly;  // Tên KH
+            textBox4.ReadOnly = readOnly;  // Mã NV
+            textBox5.ReadOnly = readOnly;  // Tên NV
             dateTimePicker1.Enabled = enable;
-            textBox7.ReadOnly = readOnly;
-            textBox11.ReadOnly = readOnly;
-            textBox10.ReadOnly = readOnly;
-            textBox9.ReadOnly = readOnly;
-            textBox13.ReadOnly = readOnly;
-            comboBox1.Enabled = enable;
-            textBox8.ReadOnly = readOnly;
+            textBox7.ReadOnly = readOnly;   // Mã SP
+            textBox11.ReadOnly = readOnly;  // Loại SP
+            textBox10.ReadOnly = readOnly;  // Tên SP
+            textBox9.ReadOnly = readOnly;   // Mô Tả
+            textBox13.ReadOnly = readOnly; // Màu Sắc
+            comboBox1.Enabled = enable;     // Size
+            textBox8.ReadOnly = readOnly;   // Chất Liệu
             numericUpDown2.ReadOnly = readOnly;
-            textBox6.ReadOnly = readOnly;
+            textBox6.ReadOnly = readOnly;   // Giá
             radioButton1.Enabled = enable;
             radioButton2.Enabled = enable;
             radioButton3.Enabled = enable;
             button1.Enabled = enable;
+        }
+
+        // ===================== CHỌN HÓA ĐƠN =====================
+        private void DataGridView2_SelectionChanged(object? sender, EventArgs e)
+        {
+            if (dataGridView2.SelectedRows.Count == 0) return;
+            var row = dataGridView2.SelectedRows[0];
+
+            try
+            {
+                textBox1.Text = row.Cells["Column1"]?.Value?.ToString() ?? "";
+                textBox4.Text = row.Cells["Column3"]?.Value?.ToString() ?? "";
+                textBox5.Text = row.Cells["Column4"]?.Value?.ToString() ?? "";
+
+                // Đổ dữ liệu Hoa_Don: textBox2 = SĐT KH, textBox3 = Tên KH
+                MoKetNoi();
+                string queryHD = "SELECT So_Dien_Thoai_KH, Ten_Khach_Hang FROM Hoa_Don WHERE Ma_Hop_Dong = @ma";
+                SqlCommand cmdHD = new SqlCommand(queryHD, sqlCon);
+                cmdHD.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
+                SqlDataReader readerHD = cmdHD.ExecuteReader();
+                if (readerHD.Read())
+                {
+                    textBox2.Text = readerHD["So_Dien_Thoai_KH"]?.ToString() ?? "";
+                    textBox3.Text = readerHD["Ten_Khach_Hang"]?.ToString() ?? "";
+                }
+                readerHD.Close();
+
+                var ngayVal = row.Cells["Column2"]?.Value;
+                if (ngayVal != null && ngayVal != DBNull.Value)
+                {
+                    if (DateTime.TryParse(ngayVal.ToString(), out DateTime ngay))
+                        dateTimePicker1.Value = ngay;
+                }
+            }
+            catch { }
+
+            var ma = textBox1.Text.Trim();
+            if (!string.IsNullOrEmpty(ma))
+            {
+                ShowProductsForInvoice(ma);
+                TinhTongTien();
+            }
+        }
+
+        // ===================== LOAD SẢN PHẨM THEO HÓA ĐƠN =====================
+        private void ShowProductsForInvoice(string maHopDong)
+        {
+            try
+            {
+                MoKetNoi();
+                string query = @"SELECT sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The,
+                    sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac,
+                    ctd.So_Luong, ctd.Gia_San_Pham
+                    FROM Chi_Tiet_Hoa_Don ctd
+                    INNER JOIN San_Pham sp ON ctd.Ma_SP = sp.Ma_SP
+                    WHERE ctd.Ma_Hop_Dong = @ma";
+
+                SqlCommand cmd = new SqlCommand(query, sqlCon);
+                cmd.Parameters.AddWithValue("@ma", maHopDong);
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                dataGridView3.Rows.Clear();
+                while (reader.Read())
+                {
+                    int idx = dataGridView3.Rows.Add();
+                    dataGridView3.Rows[idx].Cells["Column7"].Value = reader["Ma_Gioi_Tinh"];
+                    dataGridView3.Rows[idx].Cells["Column8"].Value = reader["Ma_Loai"];
+                    dataGridView3.Rows[idx].Cells["Column9"].Value = reader["Ma_SP"];
+                    dataGridView3.Rows[idx].Cells["Column10"].Value = reader["Ma_Bien_The"];
+                    dataGridView3.Rows[idx].Cells["Column11"].Value = reader["Ten_San_Pham"];
+                    dataGridView3.Rows[idx].Cells["Column12"].Value = reader["Chat_Lieu"];
+                    dataGridView3.Rows[idx].Cells["Column13"].Value = reader["Size"];
+                    dataGridView3.Rows[idx].Cells["Column14"].Value = reader["Mau_Sac"];
+                    dataGridView3.Rows[idx].Cells["Column15"].Value = reader["So_Luong"];
+                    dataGridView3.Rows[idx].Cells["Column16"].Value = reader["Gia_San_Pham"];
+                }
+                reader.Close();
+            }
+            catch { dataGridView3.Rows.Clear(); }
         }
 
         // ===================== NÚT THÊM (button2) =====================
@@ -356,70 +254,59 @@ namespace BTL
             try
             {
                 MoKetNoi();
-                decimal tongTien = 0;
-                decimal.TryParse(textBox6.Text.Trim(), out tongTien);
-                string gioiTinh = "Nam";
-                if (radioButton2.Checked) gioiTinh = "Nữ";
-                else if (radioButton3.Checked) gioiTinh = "Unisex";
 
+                // Lấy tổng tiền từ dataGridView3
+                decimal tongTien = 0;
+                foreach (DataGridViewRow row in dataGridView3.Rows)
+                {
+                    if (row.Cells["Column16"].Value != null &&
+                        row.Cells["Column16"].Value != DBNull.Value &&
+                        decimal.TryParse(row.Cells["Column16"].Value.ToString(), out decimal gia))
+                    {
+                        tongTien += gia;
+                    }
+                }
+
+                // INSERT Hoa_Don
                 string sqlHoaDon = @"INSERT INTO Hoa_Don
-                    (Ma_Hop_Dong, Ngay_Nhap, Ma_Nhan_Vien, Ten_Nhan_Vien, Tong_Nhan_Vien, Tong_Tien_Thanh_Toan)
-                    VALUES (@ma, @ngay, @manv, @tenNV, @tongNV, @tongtien)";
+                    (Ma_Hop_Dong, Ngay_Nhap, Ma_Nhan_Vien, Ten_Nhan_Vien, So_Dien_Thoai_KH, Ten_Khach_Hang, Tong_Tien_Thanh_Toan)
+                    VALUES (@ma, @ngay, @manv, @tenNV, @sdt, @tenKH, @tongtien)";
 
                 SqlCommand cmdHD = new SqlCommand(sqlHoaDon, sqlCon);
                 cmdHD.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
                 cmdHD.Parameters.AddWithValue("@ngay", dateTimePicker1.Value);
                 cmdHD.Parameters.AddWithValue("@manv", textBox4.Text.Trim());
                 cmdHD.Parameters.AddWithValue("@tenNV", textBox5.Text.Trim());
-                cmdHD.Parameters.AddWithValue("@tongNV", textBox2.Text.Trim());
+                cmdHD.Parameters.AddWithValue("@sdt", textBox2.Text.Trim());
+                cmdHD.Parameters.AddWithValue("@tenKH", textBox3.Text.Trim());
                 cmdHD.Parameters.AddWithValue("@tongtien", tongTien);
                 cmdHD.ExecuteNonQuery();
 
-                if (!string.IsNullOrWhiteSpace(textBox7.Text))
+                // INSERT Chi_Tiet_Hoa_Don cho từng sản phẩm trong dataGridView3
+                foreach (DataGridViewRow row in dataGridView3.Rows)
                 {
-                    string sqlSP = @"INSERT INTO San_Pham
-                        (Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The, Ten_San_Pham, Chat_Lieu, Size, Mau_Sac, So_Luong, Gia_San_Pham)
-                        VALUES (@gioiTinh, @maLoai, @maSP, @maBienThe, @tenSP, @chatLieu, @size, @mauSac, @soLuong, @gia)";
+                    if (row.IsNewRow) continue;
+                    if (row.Cells["Column9"].Value == null) continue;
 
-                    SqlCommand cmdSP = new SqlCommand(sqlSP, sqlCon);
-                    cmdSP.Parameters.AddWithValue("@gioiTinh", gioiTinh);
-                    cmdSP.Parameters.AddWithValue("@maLoai", textBox11.Text.Trim());
-                    cmdSP.Parameters.AddWithValue("@maSP", textBox7.Text.Trim());
-                    cmdSP.Parameters.AddWithValue("@maBienThe", textBox7.Text.Trim());
-                    cmdSP.Parameters.AddWithValue("@tenSP", textBox10.Text.Trim());
-                    cmdSP.Parameters.AddWithValue("@chatLieu", textBox8.Text.Trim());
-                    cmdSP.Parameters.AddWithValue("@size", comboBox1.Text);
-                    cmdSP.Parameters.AddWithValue("@mauSac", textBox13.Text.Trim());
-                    cmdSP.Parameters.AddWithValue("@soLuong", numericUpDown2.Value);
-                    cmdSP.Parameters.AddWithValue("@gia", tongTien);
+                    string maSP = row.Cells["Column9"].Value?.ToString() ?? "";
+                    decimal soLuong = 0;
+                    decimal giaSP = 0;
+                    decimal.TryParse(row.Cells["Column15"].Value?.ToString(), out soLuong);
+                    decimal.TryParse(row.Cells["Column16"].Value?.ToString(), out giaSP);
 
-                    try
-                    {
-                        cmdSP.ExecuteNonQuery();
-                        try
-                        {
-                            // Add row directly to grid using pre-defined column names
-                            int idx = dataGridView3.Rows.Add();
-                            dataGridView3.Rows[idx].Cells["Column7"].Value = gioiTinh;
-                            dataGridView3.Rows[idx].Cells["Column8"].Value = textBox11.Text.Trim();
-                            dataGridView3.Rows[idx].Cells["Column9"].Value = textBox7.Text.Trim();
-                            dataGridView3.Rows[idx].Cells["Column10"].Value = textBox7.Text.Trim();
-                            dataGridView3.Rows[idx].Cells["Column11"].Value = textBox10.Text.Trim();
-                            dataGridView3.Rows[idx].Cells["Column12"].Value = textBox8.Text.Trim();
-                            dataGridView3.Rows[idx].Cells["Column13"].Value = comboBox1.Text;
-                            dataGridView3.Rows[idx].Cells["Column14"].Value = textBox13.Text.Trim();
-                            dataGridView3.Rows[idx].Cells["Column15"].Value = numericUpDown2.Value;
-                            dataGridView3.Rows[idx].Cells["Column16"].Value = tongTien;
-                        }
-                        catch { }
-                    }
-                    catch { }
+                    string sqlCT = @"INSERT INTO Chi_Tiet_Hoa_Don (Ma_Hop_Dong, Ma_SP, So_Luong, Gia_San_Pham)
+                                     VALUES (@maHD, @maSP, @sl, @gia)";
+                    SqlCommand cmdCT = new SqlCommand(sqlCT, sqlCon);
+                    cmdCT.Parameters.AddWithValue("@maHD", textBox1.Text.Trim());
+                    cmdCT.Parameters.AddWithValue("@maSP", maSP);
+                    cmdCT.Parameters.AddWithValue("@sl", soLuong);
+                    cmdCT.Parameters.AddWithValue("@gia", giaSP);
+                    try { cmdCT.ExecuteNonQuery(); } catch { }
                 }
 
                 MessageBox.Show("Đã thêm thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 DungChinhSua();
                 LoadData();
-                TinhTongTien();
             }
             catch (Exception ex)
             {
@@ -437,27 +324,15 @@ namespace BTL
                 {
                     MoKetNoi();
 
-                    // Xoá chi tiết hoá đơn trước (nếu có)
-                    string[] ctdtTables = { "Chi_Tiet_Hoa_Don", "CT_Hoa_Don", "Hoa_Don_Chi_Tiet", "CTHD" };
-                    foreach (var table in ctdtTables)
-                    {
-                        try
-                        {
-                            string ma = textBox1.Text.Trim();
-                            if (!string.IsNullOrEmpty(ma))
-                            {
-                                string sqlDel = $"DELETE FROM {table} WHERE Ma_Hop_Dong = @ma";
-                                SqlCommand cmdDel = new SqlCommand(sqlDel, sqlCon);
-                                cmdDel.Parameters.AddWithValue("@ma", ma);
-                                cmdDel.ExecuteNonQuery();
-                            }
-                        }
-                        catch { }
-                    }
-
-                    // Xoá hoá đơn
+                    // Xoá chi tiết hoá đơn trước
                     if (!string.IsNullOrWhiteSpace(textBox1.Text))
                     {
+                        string sqlDelCT = "DELETE FROM Chi_Tiet_Hoa_Don WHERE Ma_Hop_Dong = @ma";
+                        SqlCommand cmdDelCT = new SqlCommand(sqlDelCT, sqlCon);
+                        cmdDelCT.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
+                        cmdDelCT.ExecuteNonQuery();
+
+                        // Xoá hoá đơn
                         string sqlXoa = "DELETE FROM Hoa_Don WHERE Ma_Hop_Dong = @ma";
                         SqlCommand cmd = new SqlCommand(sqlXoa, sqlCon);
                         cmd.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
@@ -506,11 +381,24 @@ namespace BTL
             try
             {
                 MoKetNoi();
+
+                // Tính lại tổng tiền
+                decimal tongTien = 0;
+                foreach (DataGridViewRow row in dataGridView3.Rows)
+                {
+                    if (row.IsNewRow) continue;
+                    if (row.Cells["Column16"].Value != null &&
+                        row.Cells["Column16"].Value != DBNull.Value &&
+                        decimal.TryParse(row.Cells["Column16"].Value.ToString(), out decimal gia))
+                        tongTien += gia;
+                }
+
                 string sqlUpdate = @"UPDATE Hoa_Don SET
                     Ngay_Nhap = @ngay,
                     Ma_Nhan_Vien = @manv,
                     Ten_Nhan_Vien = @tenNV,
-                    Tong_Nhan_Vien = @tongNV,
+                    So_Dien_Thoai_KH = @sdt,
+                    Ten_Khach_Hang = @tenKH,
                     Tong_Tien_Thanh_Toan = @tongtien
                     WHERE Ma_Hop_Dong = @ma";
 
@@ -519,10 +407,8 @@ namespace BTL
                 cmd.Parameters.AddWithValue("@ngay", dateTimePicker1.Value);
                 cmd.Parameters.AddWithValue("@manv", textBox4.Text.Trim());
                 cmd.Parameters.AddWithValue("@tenNV", textBox5.Text.Trim());
-                cmd.Parameters.AddWithValue("@tongNV", textBox2.Text.Trim());
-
-                decimal tongTien = 0;
-                decimal.TryParse(textBox6.Text.Trim(), out tongTien);
+                cmd.Parameters.AddWithValue("@sdt", textBox2.Text.Trim());
+                cmd.Parameters.AddWithValue("@tenKH", textBox3.Text.Trim());
                 cmd.Parameters.AddWithValue("@tongtien", tongTien);
 
                 int rows = cmd.ExecuteNonQuery();
@@ -533,7 +419,6 @@ namespace BTL
 
                 DungChinhSua();
                 LoadData();
-                TinhTongTien();
             }
             catch (Exception ex)
             {
@@ -550,33 +435,35 @@ namespace BTL
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(textBox6.Text))
+            {
+                MessageBox.Show("Vui lòng nhập Giá Sản Phẩm!", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             try
             {
-                MoKetNoi();
                 string gioiTinh = radioButton2.Checked ? "Nữ" : radioButton3.Checked ? "Unisex" : "Nam";
-
-                string sqlSP = @"INSERT INTO San_Pham
-                        (Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The, Ten_San_Pham, Chat_Lieu, Size, Mau_Sac, So_Luong, Gia_San_Pham)
-                        VALUES (@gioiTinh, @maLoai, @maSP, @maBienThe, @tenSP, @chatLieu, @size, @mauSac, @soLuong, @gia)";
-
-                SqlCommand cmdSP = new SqlCommand(sqlSP, sqlCon);
-                cmdSP.Parameters.AddWithValue("@gioiTinh", gioiTinh);
-                cmdSP.Parameters.AddWithValue("@maLoai", textBox11.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@maSP", textBox7.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@maBienThe", textBox7.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@tenSP", textBox10.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@chatLieu", textBox8.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@size", comboBox1.Text);
-                cmdSP.Parameters.AddWithValue("@mauSac", textBox13.Text.Trim());
-                cmdSP.Parameters.AddWithValue("@soLuong", numericUpDown2.Value);
-
+                decimal soLuong = numericUpDown2.Value;
                 decimal gia = 0;
                 decimal.TryParse(textBox6.Text.Trim(), out gia);
-                cmdSP.Parameters.AddWithValue("@gia", gia);
 
-                cmdSP.ExecuteNonQuery();
-                MessageBox.Show("Đã thêm sản phẩm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadData();
+                // Thêm vào dataGridView3
+                int idx = dataGridView3.Rows.Add();
+                dataGridView3.Rows[idx].Cells["Column7"].Value = gioiTinh;
+                dataGridView3.Rows[idx].Cells["Column8"].Value = textBox11.Text.Trim();
+                dataGridView3.Rows[idx].Cells["Column9"].Value = textBox7.Text.Trim();
+                dataGridView3.Rows[idx].Cells["Column10"].Value = textBox7.Text.Trim();
+                dataGridView3.Rows[idx].Cells["Column11"].Value = textBox10.Text.Trim();
+                dataGridView3.Rows[idx].Cells["Column12"].Value = textBox8.Text.Trim();
+                dataGridView3.Rows[idx].Cells["Column13"].Value = comboBox1.Text;
+                dataGridView3.Rows[idx].Cells["Column14"].Value = textBox13.Text.Trim();
+                dataGridView3.Rows[idx].Cells["Column15"].Value = soLuong;
+                dataGridView3.Rows[idx].Cells["Column16"].Value = gia;
+
+                TinhTongTien();
+                LamTrongTextBoxSP();
+                MessageBox.Show("Đã thêm sản phẩm vào danh sách!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -611,34 +498,47 @@ namespace BTL
         private void DungChinhSua()
         {
             SetFormReadOnly(true);
+            button2.Text = "Thêm";
+            button5.Text = "Chỉnh Sửa";
+            button2.Enabled = true;
+            button5.Enabled = true;
         }
 
         private void LamTrong()
         {
-            foreach (Control c in this.Controls)
-            {
-                if (c is TextBox) ((TextBox)c).Clear();
-            }
             textBox1.Clear(); textBox2.Clear(); textBox3.Clear(); textBox4.Clear();
             textBox5.Clear(); textBox6.Clear(); textBox7.Clear(); textBox8.Clear();
             textBox9.Clear(); textBox10.Clear(); textBox11.Clear(); textBox13.Clear();
-
             numericUpDown2.Value = 0;
             if (comboBox1.Items.Count > 0)
                 comboBox1.SelectedIndex = 0;
             else
                 comboBox1.SelectedIndex = -1;
-
             radioButton1.Checked = true;
             pictureBox2.Image = null;
             dateTimePicker1.Value = DateTime.Now;
         }
 
+        private void LamTrongTextBoxSP()
+        {
+            textBox7.Clear();
+            textBox11.Clear();
+            textBox10.Clear();
+            textBox9.Clear();
+            textBox13.Clear();
+            textBox8.Clear();
+            comboBox1.SelectedIndex = -1;
+            numericUpDown2.Value = 0;
+            textBox6.Clear();
+            radioButton1.Checked = true;
+            pictureBox2.Image = null;
+        }
+
         private void btnChonAnh_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFile = new OpenFileDialog();
-            openFile.Title = "Chọn ảnh từ máy tính";
-            openFile.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+            openFile.Title = "Chọn ảnh sản phẩm";
+            openFile.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
             openFile.Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp; *.png)|*.jpg; *.jpeg; *.gif; *.bmp; *.png";
 
             if (openFile.ShowDialog() == DialogResult.OK)
@@ -646,7 +546,6 @@ namespace BTL
                 pictureBox2.Image = new Bitmap(openFile.FileName);
                 pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
                 pictureBox2.Tag = openFile.FileName;
-                MessageBox.Show("Đã chọn ảnh thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 

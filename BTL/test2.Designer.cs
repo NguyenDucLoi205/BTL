@@ -471,7 +471,7 @@ namespace BTL
             button1.Name = "button1";
             button1.Size = new Size(151, 37);
             button1.TabIndex = 61;
-            button1.Text = "Máy Tính";
+            button1.Text = "Chọn Ảnh";
             button1.UseVisualStyleBackColor = false;
             button1.Click += btnChonAnh_Click;
             //
