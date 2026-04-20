@@ -1,6 +1,6 @@
-﻿namespace BTL
+namespace BTL
 {
-    partial class TaiQuay
+    partial class Test2
     {
         /// <summary>
         /// Required designer variable.
@@ -28,15 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            column6 = new DataGridViewTextBoxColumn();
             textBox13 = new TextBox();
             label24 = new Label();
             radioButton3 = new RadioButton();
-            label12 = new Label();
             pictureBox2 = new PictureBox();
-            column4 = new DataGridViewTextBoxColumn();
-            column3 = new DataGridViewTextBoxColumn();
-            column2 = new DataGridViewTextBoxColumn();
             button6 = new Button();
             button5 = new Button();
             button4 = new Button();
@@ -45,15 +40,10 @@
             numericUpDown2 = new NumericUpDown();
             comboBox1 = new ComboBox();
             textBox8 = new TextBox();
-            column5 = new DataGridViewTextBoxColumn();
             label23 = new Label();
             textBox6 = new TextBox();
             textBox12 = new TextBox();
             label21 = new Label();
-            column9 = new DataGridViewTextBoxColumn();
-            column8 = new DataGridViewTextBoxColumn();
-            column7 = new DataGridViewTextBoxColumn();
-            column1 = new DataGridViewTextBoxColumn();
             label9 = new Label();
             label13 = new Label();
             label14 = new Label();
@@ -66,12 +56,12 @@
             radioButton1 = new RadioButton();
             label16 = new Label();
             label17 = new Label();
-            dataGridView1 = new DataGridView();
             panel1 = new Panel();
             label1 = new Label();
             pictureBox1 = new PictureBox();
             label22 = new Label();
             panel2 = new Panel();
+            button1 = new Button();
             label18 = new Label();
             label19 = new Label();
             label20 = new Label();
@@ -90,22 +80,33 @@
             label4 = new Label();
             label3 = new Label();
             label2 = new Label();
+            dataGridView2 = new DataGridView();
+            dataGridView3 = new DataGridView();
+            Column10 = new DataGridViewTextBoxColumn();
+            Column8 = new DataGridViewTextBoxColumn();
+            Column7 = new DataGridViewTextBoxColumn();
+            Column9 = new DataGridViewTextBoxColumn();
+            Column11 = new DataGridViewTextBoxColumn();
+            Column12 = new DataGridViewTextBoxColumn();
+            Column13 = new DataGridViewTextBoxColumn();
+            Column14 = new DataGridViewTextBoxColumn();
+            Column15 = new DataGridViewTextBoxColumn();
+            Column16 = new DataGridViewTextBoxColumn();
+            Column1 = new DataGridViewTextBoxColumn();
+            Column2 = new DataGridViewTextBoxColumn();
+            Column3 = new DataGridViewTextBoxColumn();
+            Column4 = new DataGridViewTextBoxColumn();
+            Column5 = new DataGridViewTextBoxColumn();
+            Column17 = new DataGridViewTextBoxColumn();
+            Column6 = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
             SuspendLayout();
-            // 
-            // column6
-            // 
-            column6.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            column6.FillWeight = 50F;
-            column6.HeaderText = "SIZE";
-            column6.MinimumWidth = 6;
-            column6.Name = "column6";
-            column6.Width = 44;
             // 
             // textBox13
             // 
@@ -136,15 +137,6 @@
             radioButton3.Text = "Unisex";
             radioButton3.UseVisualStyleBackColor = false;
             // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new Point(528, 589);
-            label12.Name = "label12";
-            label12.Size = new Size(104, 20);
-            label12.TabIndex = 56;
-            label12.Text = "Ảnh Sản Phẩm";
-            // 
             // pictureBox2
             // 
             pictureBox2.BorderStyle = BorderStyle.FixedSingle;
@@ -153,26 +145,6 @@
             pictureBox2.Size = new Size(280, 272);
             pictureBox2.TabIndex = 55;
             pictureBox2.TabStop = false;
-            // 
-            // column4
-            // 
-            column4.HeaderText = "Mô Tả";
-            column4.MinimumWidth = 6;
-            column4.Name = "column4";
-            // 
-            // column3
-            // 
-            column3.HeaderText = "Tên SP";
-            column3.MinimumWidth = 6;
-            column3.Name = "column3";
-            // 
-            // column2
-            // 
-            column2.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            column2.HeaderText = "Mã SP";
-            column2.MinimumWidth = 6;
-            column2.Name = "column2";
-            column2.Width = 88;
             // 
             // button6
             // 
@@ -233,12 +205,15 @@
             // 
             // comboBox1
             // 
+            comboBox1.BackColor = SystemColors.Window;
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "S", "L", "XL", "XXL" });
+            comboBox1.Items.AddRange(new object[] { "S", "M", "L" });
             comboBox1.Location = new Point(142, 457);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(238, 28);
             comboBox1.TabIndex = 46;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // textBox8
             // 
@@ -248,17 +223,11 @@
             textBox8.Size = new Size(238, 27);
             textBox8.TabIndex = 45;
             // 
-            // column5
-            // 
-            column5.HeaderText = "Màu Sắc";
-            column5.MinimumWidth = 6;
-            column5.Name = "column5";
-            // 
             // label23
             // 
             label23.BackColor = SystemColors.ActiveCaption;
             label23.Font = new Font("Times New Roman", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label23.Location = new Point(1276, 766);
+            label23.Location = new Point(1229, 759);
             label23.Name = "label23";
             label23.Size = new Size(152, 41);
             label23.TabIndex = 64;
@@ -289,39 +258,10 @@
             label21.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label21.Location = new Point(761, 593);
             label21.Name = "label21";
-            label21.Size = new Size(171, 35);
+            label21.Size = new Size(181, 42);
             label21.TabIndex = 61;
             label21.Text = "Thanh Toán";
             label21.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // column9
-            // 
-            column9.HeaderText = "Giá";
-            column9.MinimumWidth = 6;
-            column9.Name = "column9";
-            // 
-            // column8
-            // 
-            column8.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            column8.HeaderText = "SL";
-            column8.MinimumWidth = 6;
-            column8.Name = "column8";
-            column8.Width = 50;
-            // 
-            // column7
-            // 
-            column7.HeaderText = "Material";
-            column7.MinimumWidth = 6;
-            column7.Name = "column7";
-            // 
-            // column1
-            // 
-            column1.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            column1.FillWeight = 40F;
-            column1.HeaderText = "Giới Tính";
-            column1.MinimumWidth = 6;
-            column1.Name = "column1";
-            column1.Width = 85;
             // 
             // label9
             // 
@@ -433,18 +373,6 @@
             label17.TabIndex = 32;
             label17.Text = "Mô Tả";
             // 
-            // dataGridView1
-            // 
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView1.BackgroundColor = SystemColors.ButtonFace;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { column1, column2, column3, column4, column5, column6, column7, column8, column9 });
-            dataGridView1.Location = new Point(761, 83);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(670, 492);
-            dataGridView1.TabIndex = 60;
-            // 
             // panel1
             // 
             panel1.BackColor = SystemColors.ActiveCaption;
@@ -481,17 +409,17 @@
             label22.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label22.Location = new Point(780, 669);
             label22.Name = "label22";
-            label22.Size = new Size(133, 25);
+            label22.Size = new Size(162, 51);
             label22.TabIndex = 62;
             label22.Text = "Tổng Cộng";
             label22.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panel2
             // 
+            panel2.Controls.Add(button1);
             panel2.Controls.Add(textBox13);
             panel2.Controls.Add(label24);
             panel2.Controls.Add(radioButton3);
-            panel2.Controls.Add(label12);
             panel2.Controls.Add(pictureBox2);
             panel2.Controls.Add(button6);
             panel2.Controls.Add(button5);
@@ -536,6 +464,17 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(743, 762);
             panel2.TabIndex = 59;
+            // 
+            // button1
+            // 
+            button1.BackColor = SystemColors.ActiveCaption;
+            button1.Location = new Point(495, 581);
+            button1.Name = "button1";
+            button1.Size = new Size(151, 37);
+            button1.TabIndex = 61;
+            button1.Text = "Máy Tính";
+            button1.UseVisualStyleBackColor = false;
+            button1.Click += btnChonAnh_Click;
             // 
             // label18
             // 
@@ -684,42 +623,185 @@
             label2.TabIndex = 0;
             label2.Text = "Thông Tin Hoá Đơn";
             // 
-            //  TaiQuay
+            // dataGridView2
+            // 
+            dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            dataGridView2.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
+            dataGridView2.BackgroundColor = SystemColors.Control;
+            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5, Column17, Column6 });
+            dataGridView2.Location = new Point(761, 80);
+            dataGridView2.Name = "dataGridView2";
+            dataGridView2.RowHeadersWidth = 51;
+            dataGridView2.Size = new Size(667, 246);
+            dataGridView2.TabIndex = 65;
+            dataGridView2.CellContentClick += dataGridView2_CellContentClick;
+            // 
+            // dataGridView3
+            // 
+            dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            dataGridView3.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
+            dataGridView3.BackgroundColor = SystemColors.Control;
+            dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView3.Columns.AddRange(new DataGridViewColumn[] { Column10, Column8, Column7, Column9, Column11, Column12, Column13, Column14, Column15, Column16 });
+            dataGridView3.Location = new Point(764, 329);
+            dataGridView3.Name = "dataGridView3";
+            dataGridView3.RowHeadersWidth = 51;
+            dataGridView3.Size = new Size(667, 246);
+            dataGridView3.TabIndex = 66;
+            // 
+            // Column10
+            // 
+            Column10.HeaderText = "Ma_Gioi_Tinh";
+            Column10.MinimumWidth = 6;
+            Column10.Name = "Column10";
+            Column10.Width = 126;
+            // 
+            // Column8
+            // 
+            Column8.HeaderText = "Ma_Loai";
+            Column8.MinimumWidth = 6;
+            Column8.Name = "Column8";
+            Column8.Width = 93;
+            // 
+            // Column7
+            // 
+            Column7.HeaderText = "Ma_SP";
+            Column7.MinimumWidth = 6;
+            Column7.Name = "Column7";
+            Column7.Width = 81;
+            // 
+            // Column9
+            // 
+            Column9.HeaderText = "Ma_Bien_The";
+            Column9.MinimumWidth = 6;
+            Column9.Name = "Column9";
+            Column9.Width = 124;
+            // 
+            // Column11
+            // 
+            Column11.HeaderText = "Ten_San_Pham";
+            Column11.MinimumWidth = 6;
+            Column11.Name = "Column11";
+            Column11.Width = 134;
+            // 
+            // Column12
+            // 
+            Column12.HeaderText = "Chat_Lieu";
+            Column12.MinimumWidth = 6;
+            Column12.Name = "Column12";
+            Column12.Width = 101;
+            // 
+            // Column13
+            // 
+            Column13.HeaderText = "Size";
+            Column13.MinimumWidth = 6;
+            Column13.Name = "Column13";
+            Column13.Width = 65;
+            // 
+            // Column14
+            // 
+            Column14.HeaderText = "Mau_Sac";
+            Column14.MinimumWidth = 6;
+            Column14.Name = "Column14";
+            Column14.Width = 96;
+            // 
+            // Column15
+            // 
+            Column15.HeaderText = "So_Luong";
+            Column15.MinimumWidth = 6;
+            Column15.Name = "Column15";
+            Column15.Width = 102;
+            // 
+            // Column16
+            // 
+            Column16.HeaderText = "Gia_San_Pham";
+            Column16.MinimumWidth = 6;
+            Column16.Name = "Column16";
+            Column16.Width = 133;
+            // 
+            // Column1
+            // 
+            Column1.HeaderText = "Ma_hop_Dong";
+            Column1.MinimumWidth = 6;
+            Column1.Name = "Column1";
+            Column1.Width = 134;
+            // 
+            // Column2
+            // 
+            Column2.HeaderText = "Ngay_Nhap";
+            Column2.MinimumWidth = 6;
+            Column2.Name = "Column2";
+            Column2.Width = 115;
+            // 
+            // Column3
+            // 
+            Column3.HeaderText = "Ma_Nhan_Vien";
+            Column3.MinimumWidth = 6;
+            Column3.Name = "Column3";
+            Column3.Width = 135;
+            // 
+            // Column4
+            // 
+            Column4.HeaderText = "Ten_Nhan_Vien";
+            Column4.MinimumWidth = 6;
+            Column4.Name = "Column4";
+            Column4.Width = 137;
+            // 
+            // Column5
+            // 
+            Column5.HeaderText = "Ma_Khach_Hang";
+            Column5.MinimumWidth = 6;
+            Column5.Name = "Column5";
+            Column5.Width = 147;
+            // 
+            // Column17
+            // 
+            Column17.HeaderText = "Ten_Khach_Hang";
+            Column17.MinimumWidth = 6;
+            Column17.Name = "Column17";
+            Column17.Width = 149;
+            // 
+            // Column6
+            // 
+            Column6.HeaderText = "Tong_Tien_Thanh_Toan";
+            Column6.MinimumWidth = 6;
+            Column6.Name = "Column6";
+            Column6.Width = 189;
+            // 
+            // Test2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1442, 853);
+            Controls.Add(dataGridView3);
+            Controls.Add(dataGridView2);
             Controls.Add(label23);
             Controls.Add(textBox12);
             Controls.Add(label21);
-            Controls.Add(dataGridView1);
             Controls.Add(panel1);
             Controls.Add(label22);
             Controls.Add(panel2);
-            Name = "TaiQuay";
-            Text = "TaiQuay";
+            Name = "Test2";
+            Text = "test2";
+            Load += test2_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private DataGridViewTextBoxColumn column6;
         private TextBox textBox13;
         private Label label24;
         private RadioButton radioButton3;
-        private Label label12;
         private PictureBox pictureBox2;
-        private DataGridViewTextBoxColumn column4;
-        private DataGridViewTextBoxColumn column3;
-        private DataGridViewTextBoxColumn column2;
         private Button button6;
         private Button button5;
         private Button button4;
@@ -728,15 +810,10 @@
         private NumericUpDown numericUpDown2;
         private ComboBox comboBox1;
         private TextBox textBox8;
-        private DataGridViewTextBoxColumn column5;
         private Label label23;
         private TextBox textBox6;
         private TextBox textBox12;
         private Label label21;
-        private DataGridViewTextBoxColumn column9;
-        private DataGridViewTextBoxColumn column8;
-        private DataGridViewTextBoxColumn column7;
-        private DataGridViewTextBoxColumn column1;
         private Label label9;
         private Label label13;
         private Label label14;
@@ -749,7 +826,6 @@
         private RadioButton radioButton1;
         private Label label16;
         private Label label17;
-        private DataGridView dataGridView1;
         private Panel panel1;
         private Label label1;
         private PictureBox pictureBox1;
@@ -773,5 +849,25 @@
         private Label label4;
         private Label label3;
         private Label label2;
+        private Button button1;
+        private DataGridView dataGridView2;
+        private DataGridView dataGridView3;
+        private DataGridViewTextBoxColumn Column10;
+        private DataGridViewTextBoxColumn Column8;
+        private DataGridViewTextBoxColumn Column7;
+        private DataGridViewTextBoxColumn Column9;
+        private DataGridViewTextBoxColumn Column11;
+        private DataGridViewTextBoxColumn Column12;
+        private DataGridViewTextBoxColumn Column13;
+        private DataGridViewTextBoxColumn Column14;
+        private DataGridViewTextBoxColumn Column15;
+        private DataGridViewTextBoxColumn Column16;
+        private DataGridViewTextBoxColumn Column1;
+        private DataGridViewTextBoxColumn Column2;
+        private DataGridViewTextBoxColumn Column3;
+        private DataGridViewTextBoxColumn Column4;
+        private DataGridViewTextBoxColumn Column5;
+        private DataGridViewTextBoxColumn Column17;
+        private DataGridViewTextBoxColumn Column6;
     }
 }

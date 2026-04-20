@@ -1,6 +1,5 @@
 using System;
 using System.Windows.Forms;
-using luxury;
 
 namespace BTL
 {
@@ -16,7 +15,7 @@ namespace BTL
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Sửa dòng này để chương trình khởi chạy từ form Đăng Nhập đầu tiên
-            Application.Run(new TaiQuay());
+            Application.Run(new Test2());
         }
     }
 }
