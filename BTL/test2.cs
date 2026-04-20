@@ -34,13 +34,13 @@ namespace BTL
 
             try
             {
-                textBox1.Text = row.Cells["Ma_Hop_Dong"]?.Value?.ToString() ?? "";
-                textBox4.Text = row.Cells["Ma_Nhan_Vien"]?.Value?.ToString() ?? "";
-                textBox5.Text = row.Cells["Ten_Nhan_Vien"]?.Value?.ToString() ?? "";
-                textBox2.Text = row.Cells["Ten_Khach_Hang"]?.Value?.ToString() ?? "";
-                textBox3.Text = row.Cells["So_Dien_Thoai"]?.Value?.ToString() ?? "";
+                textBox1.Text = row.Cells["Column1"]?.Value?.ToString() ?? "";
+                textBox4.Text = row.Cells["Column3"]?.Value?.ToString() ?? "";
+                textBox5.Text = row.Cells["Column4"]?.Value?.ToString() ?? "";
+                textBox2.Text = row.Cells["Column5"]?.Value?.ToString() ?? "";
+                textBox3.Text = "";
 
-                var ngayVal = row.Cells["Ngay_Nhap"]?.Value;
+                var ngayVal = row.Cells["Column2"]?.Value;
                 if (ngayVal != null && ngayVal != DBNull.Value)
                 {
                     if (DateTime.TryParse(ngayVal.ToString(), out DateTime ngay))
@@ -145,6 +145,25 @@ namespace BTL
                         if (dt.Rows.Count > 0)
                         {
                             dataGridView3.DataSource = dt;
+                            // Map data to pre-defined columns
+                            foreach (DataGridViewRow gvr in dataGridView3.Rows)
+                            {
+                                int idx = gvr.Index;
+                                if (idx < dt.Rows.Count)
+                                {
+                                    DataRow dr = dt.Rows[idx];
+                                    gvr.Cells["Column7"].Value = dr["Ma_Gioi_Tinh"];
+                                    gvr.Cells["Column8"].Value = dr["Ma_Loai"];
+                                    gvr.Cells["Column9"].Value = dr["Ma_SP"];
+                                    gvr.Cells["Column10"].Value = dr["Ma_Bien_The"];
+                                    gvr.Cells["Column11"].Value = dr["Ten_San_Pham"];
+                                    gvr.Cells["Column12"].Value = dr["Chat_Lieu"];
+                                    gvr.Cells["Column13"].Value = dr["Size"];
+                                    gvr.Cells["Column14"].Value = dr["Mau_Sac"];
+                                    gvr.Cells["Column15"].Value = dr["So_Luong"];
+                                    gvr.Cells["Column16"].Value = dr["Gia_San_Pham"];
+                                }
+                            }
                             dataGridView3.AllowUserToAddRows = false;
                             dataGridView3.RowHeadersVisible = false;
                             dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -211,7 +230,7 @@ namespace BTL
             try
             {
                 MoKetNoi();
-                string query = "SELECT * FROM Hoa_Don";
+                string query = "SELECT Ma_Hop_Dong, Ngay_Nhap, Ma_Nhan_Vien, Ten_Nhan_Vien, Ten_Khach_Hang, So_Dien_Thoai, Tong_Tien_Thanh_Toan FROM Hoa_Don";
                 SqlDataAdapter adapter = new SqlDataAdapter(query, sqlCon);
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
@@ -220,10 +239,24 @@ namespace BTL
                 dataGridView2.RowHeadersVisible = false;
                 dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
+                // Map data to pre-defined columns (DataSource auto-generates rows, then we sync to pre-defined columns)
+                if (dt.Rows.Count > 0)
+                {
+                    for (int i = 0; i < Math.Min(dataGridView2.Rows.Count, dt.Rows.Count); i++)
+                    {
+                        DataRow dr = dt.Rows[i];
+                        dataGridView2.Rows[i].Cells["Column1"].Value = dr["Ma_Hop_Dong"];
+                        dataGridView2.Rows[i].Cells["Column2"].Value = dr["Ngay_Nhap"];
+                        dataGridView2.Rows[i].Cells["Column3"].Value = dr["Ma_Nhan_Vien"];
+                        dataGridView2.Rows[i].Cells["Column4"].Value = dr["Ten_Nhan_Vien"];
+                        dataGridView2.Rows[i].Cells["Column5"].Value = dr["Ten_Khach_Hang"];
+                        dataGridView2.Rows[i].Cells["Column6"].Value = dr["Tong_Tien_Thanh_Toan"];
+                    }
+                }
+
                 try
                 {
-                    string q2 = @"SELECT
-                        Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The,
+                    string q2 = @"SELECT Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The,
                         Ten_San_Pham, Chat_Lieu, Size, Mau_Sac,
                         So_Luong, Gia_San_Pham FROM San_Pham";
                     SqlDataAdapter da2 = new SqlDataAdapter(q2, sqlCon);
@@ -233,6 +266,25 @@ namespace BTL
                     dataGridView3.AllowUserToAddRows = false;
                     dataGridView3.RowHeadersVisible = false;
                     dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+                    // Map data to pre-defined columns
+                    if (dt2.Rows.Count > 0)
+                    {
+                        for (int i = 0; i < Math.Min(dataGridView3.Rows.Count, dt2.Rows.Count); i++)
+                        {
+                            DataRow dr = dt2.Rows[i];
+                            dataGridView3.Rows[i].Cells["Column7"].Value = dr["Ma_Gioi_Tinh"];
+                            dataGridView3.Rows[i].Cells["Column8"].Value = dr["Ma_Loai"];
+                            dataGridView3.Rows[i].Cells["Column9"].Value = dr["Ma_SP"];
+                            dataGridView3.Rows[i].Cells["Column10"].Value = dr["Ma_Bien_The"];
+                            dataGridView3.Rows[i].Cells["Column11"].Value = dr["Ten_San_Pham"];
+                            dataGridView3.Rows[i].Cells["Column12"].Value = dr["Chat_Lieu"];
+                            dataGridView3.Rows[i].Cells["Column13"].Value = dr["Size"];
+                            dataGridView3.Rows[i].Cells["Column14"].Value = dr["Mau_Sac"];
+                            dataGridView3.Rows[i].Cells["Column15"].Value = dr["So_Luong"];
+                            dataGridView3.Rows[i].Cells["Column16"].Value = dr["Gia_San_Pham"];
+                        }
+                    }
                 }
                 catch { }
             }
@@ -366,21 +418,18 @@ namespace BTL
                         cmdSP.ExecuteNonQuery();
                         try
                         {
-                            if (dataGridView3.DataSource is DataTable dtProducts)
-                            {
-                                DataRow nr = dtProducts.NewRow();
-                                nr["Ma_Gioi_Tinh"] = gioiTinh;
-                                nr["Ma_Loai"] = textBox11.Text.Trim();
-                                nr["Ma_SP"] = textBox7.Text.Trim();
-                                nr["Ma_Bien_The"] = textBox7.Text.Trim();
-                                nr["Ten_San_Pham"] = textBox10.Text.Trim();
-                                nr["Chat_Lieu"] = textBox8.Text.Trim();
-                                nr["Size"] = comboBox1.Text;
-                                nr["Mau_Sac"] = textBox13.Text.Trim();
-                                nr["So_Luong"] = numericUpDown2.Value;
-                                nr["Gia_San_Pham"] = tongTien;
-                                dtProducts.Rows.Add(nr);
-                            }
+                            // Add row directly to grid using pre-defined column names
+                            int idx = dataGridView3.Rows.Add();
+                            dataGridView3.Rows[idx].Cells["Column7"].Value = gioiTinh;
+                            dataGridView3.Rows[idx].Cells["Column8"].Value = textBox11.Text.Trim();
+                            dataGridView3.Rows[idx].Cells["Column9"].Value = textBox7.Text.Trim();
+                            dataGridView3.Rows[idx].Cells["Column10"].Value = textBox7.Text.Trim();
+                            dataGridView3.Rows[idx].Cells["Column11"].Value = textBox10.Text.Trim();
+                            dataGridView3.Rows[idx].Cells["Column12"].Value = textBox8.Text.Trim();
+                            dataGridView3.Rows[idx].Cells["Column13"].Value = comboBox1.Text;
+                            dataGridView3.Rows[idx].Cells["Column14"].Value = textBox13.Text.Trim();
+                            dataGridView3.Rows[idx].Cells["Column15"].Value = numericUpDown2.Value;
+                            dataGridView3.Rows[idx].Cells["Column16"].Value = tongTien;
                         }
                         catch { }
                     }
