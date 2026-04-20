@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,6 +13,19 @@ namespace BTL
         public test()
         {
             InitializeComponent();
+            LoadData();
+        }
+
+        private void LoadData()
+        {
+            var data = new List<SanPham>
+            {
+                new SanPham { Ma = "SP001", Ten = "Sữa tươi", Gia = 15000 },
+                new SanPham { Ma = "SP002", Ten = "Bánh mì", Gia = 12000 },
+                new SanPham { Ma = "SP003", Ten = "Nước ngọt", Gia = 10000 },
+                new SanPham { Ma = "SP004", Ten = "Cà phê", Gia = 25000 },
+            };
+            dgvData.DataSource = data;
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
@@ -42,5 +55,12 @@ namespace BTL
         {
 
         }
+    }
+
+    public class SanPham
+    {
+        public string Ma { get; set; }
+        public string Ten { get; set; }
+        public decimal Gia { get; set; }
     }
 }

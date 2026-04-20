@@ -1,4 +1,4 @@
-﻿namespace BTL
+namespace BTL
 {
     partial class test
     {
@@ -38,12 +38,17 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             mainPanel = new Guna.UI2.WinForms.Guna2Panel();
             cardPanel = new Guna.UI2.WinForms.Guna2Panel();
             titleLabel = new Guna.UI2.WinForms.Guna2HtmlLabel();
             txtUsername = new Guna.UI2.WinForms.Guna2TextBox();
             txtPassword = new Guna.UI2.WinForms.Guna2TextBox();
             btnLogin = new Guna.UI2.WinForms.Guna2Button();
+            dgvData = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)dgvData).BeginInit();
             mainPanel.SuspendLayout();
             cardPanel.SuspendLayout();
             SuspendLayout();
@@ -63,6 +68,7 @@
             // cardPanel
             // 
             cardPanel.BackColor = Color.White;
+            cardPanel.Controls.Add(dgvData);
             cardPanel.Controls.Add(titleLabel);
             cardPanel.Controls.Add(txtUsername);
             cardPanel.Controls.Add(txtPassword);
@@ -150,6 +156,83 @@
             btnLogin.Text = "Đăng nhập";
             btnLogin.Click += btnLogin_Click;
             // 
+            // dgvData
+            // 
+            dgvData.AllowUserToAddRows = false;
+            dgvData.AllowUserToDeleteRows = false;
+            dgvData.AutoGenerateColumns = false;
+            dgvData.BackgroundColor = Color.White;
+            dgvData.BorderStyle = BorderStyle.None;
+            dgvData.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(0, 120, 215);
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(0, 100, 190);
+            dataGridViewCellStyle1.SelectionForeColor = Color.White;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
+            dgvData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dgvData.ColumnHeadersHeight = 40;
+            dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgvData.Columns.AddRange(new DataGridViewColumn[] { colMa, colTen, colGia });
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.White;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F);
+            dataGridViewCellStyle2.ForeColor = Color.Black;
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(230, 240, 255);
+            dataGridViewCellStyle2.SelectionForeColor = Color.Black;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dgvData.DefaultCellStyle = dataGridViewCellStyle2;
+            dgvData.Dock = DockStyle.Bottom;
+            dgvData.EditMode = DataGridViewEditMode.EditProgrammatically;
+            dgvData.EnableHeadersVisualStyles = false;
+            dgvData.GridColor = Color.FromArgb(220, 220, 220);
+            dgvData.Location = new Point(0, 0);
+            dgvData.MultiSelect = false;
+            dgvData.Name = "dgvData";
+            dgvData.ReadOnly = true;
+            dgvData.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            dataGridViewCellStyle3.BackColor = Color.FromArgb(245, 245, 245);
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 10F);
+            dataGridViewCellStyle3.ForeColor = Color.Black;
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(230, 240, 255);
+            dataGridViewCellStyle3.SelectionForeColor = Color.Black;
+            dgvData.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dgvData.RowHeadersVisible = false;
+            dgvData.RowHeadersWidth = 50;
+            dgvData.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dgvData.RowTemplate.Height = 35;
+            dgvData.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvData.Size = new Size(560, 160);
+            dgvData.TabIndex = 0;
+            // 
+            // colMa
+            // 
+            colMa.DataPropertyName = "Ma";
+            colMa.HeaderText = "Mã";
+            colMa.MinimumWidth = 60;
+            colMa.Name = "colMa";
+            colMa.ReadOnly = true;
+            colMa.Width = 80;
+            // 
+            // colTen
+            // 
+            colTen.DataPropertyName = "Ten";
+            colTen.HeaderText = "Tên";
+            colTen.MinimumWidth = 100;
+            colTen.Name = "colTen";
+            colTen.ReadOnly = true;
+            colTen.Width = 250;
+            // 
+            // colGia
+            // 
+            colGia.DataPropertyName = "Gia";
+            colGia.HeaderText = "Giá";
+            colGia.MinimumWidth = 60;
+            colGia.Name = "colGia";
+            colGia.ReadOnly = true;
+            colGia.Width = 100;
+            // 
             // test
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -162,6 +245,7 @@
             cardPanel.ResumeLayout(false);
             cardPanel.PerformLayout();
             ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvData).EndInit();
         }
 
         #endregion
@@ -172,5 +256,9 @@
         private Guna.UI2.WinForms.Guna2TextBox txtUsername;
         private Guna.UI2.WinForms.Guna2TextBox txtPassword;
         private Guna.UI2.WinForms.Guna2Button btnLogin;
+        private System.Windows.Forms.DataGridView dgvData;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colMa;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colTen;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colGia;
     }
 }
