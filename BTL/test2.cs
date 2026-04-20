@@ -21,7 +21,6 @@ namespace BTL
             button4.Click += new EventHandler(btnHuy_Click);
             button5.Click += new EventHandler(btnChinhSua_Click);
             button6.Click += new EventHandler(btnLamMoi_Click);
-            button1.Click += new EventHandler(btnChonSanPham_Click);
 
             SetFormReadOnly(true);
         }

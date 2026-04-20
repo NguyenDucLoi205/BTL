@@ -473,7 +473,7 @@ namespace BTL
             button1.TabIndex = 61;
             button1.Text = "Chọn Ảnh";
             button1.UseVisualStyleBackColor = false;
-            button1.Click += btnChonAnh_Click;
+            button1.Click += btnChonSanPham_Click;
             //
             // label18
             //
