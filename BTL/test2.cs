@@ -430,22 +430,40 @@ namespace BTL
         // ===================== NÚT XOÁ (button3) =====================
         private void btnXoa_Click(object? sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBox1.Text))
-            {
-                MessageBox.Show("Vui lòng chọn hoặc nhập Mã Hợp Đồng cần xoá!", "Thông báo");
-                return;
-            }
-
             DialogResult confirm = MessageBox.Show("Bạn có chắc muốn xoá hoá đơn này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirm == DialogResult.Yes)
             {
                 try
                 {
                     MoKetNoi();
-                    string sqlXoa = "DELETE FROM Hoa_Don WHERE Ma_Hop_Dong = @ma";
-                    SqlCommand cmd = new SqlCommand(sqlXoa, sqlCon);
-                    cmd.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
-                    cmd.ExecuteNonQuery();
+
+                    // Xoá chi tiết hoá đơn trước (nếu có)
+                    string[] ctdtTables = { "Chi_Tiet_Hoa_Don", "CT_Hoa_Don", "Hoa_Don_Chi_Tiet", "CTHD" };
+                    foreach (var table in ctdtTables)
+                    {
+                        try
+                        {
+                            string ma = textBox1.Text.Trim();
+                            if (!string.IsNullOrEmpty(ma))
+                            {
+                                string sqlDel = $"DELETE FROM {table} WHERE Ma_Hop_Dong = @ma";
+                                SqlCommand cmdDel = new SqlCommand(sqlDel, sqlCon);
+                                cmdDel.Parameters.AddWithValue("@ma", ma);
+                                cmdDel.ExecuteNonQuery();
+                            }
+                        }
+                        catch { }
+                    }
+
+                    // Xoá hoá đơn
+                    if (!string.IsNullOrWhiteSpace(textBox1.Text))
+                    {
+                        string sqlXoa = "DELETE FROM Hoa_Don WHERE Ma_Hop_Dong = @ma";
+                        SqlCommand cmd = new SqlCommand(sqlXoa, sqlCon);
+                        cmd.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
+                        cmd.ExecuteNonQuery();
+                    }
+
                     MessageBox.Show("Xoá thành công!");
                     btnLamMoi_Click(null, null);
                 }
@@ -491,9 +509,8 @@ namespace BTL
                 string sqlUpdate = @"UPDATE Hoa_Don SET
                     Ngay_Nhap = @ngay,
                     Ma_Nhan_Vien = @manv,
-                    Ten_Khach_Hang = @tenKH,
-                    So_Dien_Thoai = @sdt,
                     Ten_Nhan_Vien = @tenNV,
+                    Tong_Nhan_Vien = @tongNV,
                     Tong_Tien_Thanh_Toan = @tongtien
                     WHERE Ma_Hop_Dong = @ma";
 
@@ -501,9 +518,8 @@ namespace BTL
                 cmd.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
                 cmd.Parameters.AddWithValue("@ngay", dateTimePicker1.Value);
                 cmd.Parameters.AddWithValue("@manv", textBox4.Text.Trim());
-                cmd.Parameters.AddWithValue("@tenKH", textBox2.Text.Trim());
-                cmd.Parameters.AddWithValue("@sdt", textBox3.Text.Trim());
                 cmd.Parameters.AddWithValue("@tenNV", textBox5.Text.Trim());
+                cmd.Parameters.AddWithValue("@tongNV", textBox2.Text.Trim());
 
                 decimal tongTien = 0;
                 decimal.TryParse(textBox6.Text.Trim(), out tongTien);
@@ -522,6 +538,49 @@ namespace BTL
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi khi lưu chỉnh sửa: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // ===================== NÚT CHỌN SẢN PHẨM (button1) =====================
+        private void btnChonSanPham_Click(object? sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(textBox7.Text))
+            {
+                MessageBox.Show("Vui lòng nhập Mã Sản Phẩm!", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                MoKetNoi();
+                string gioiTinh = radioButton2.Checked ? "Nữ" : radioButton3.Checked ? "Unisex" : "Nam";
+
+                string sqlSP = @"INSERT INTO San_Pham
+                        (Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The, Ten_San_Pham, Chat_Lieu, Size, Mau_Sac, So_Luong, Gia_San_Pham)
+                        VALUES (@gioiTinh, @maLoai, @maSP, @maBienThe, @tenSP, @chatLieu, @size, @mauSac, @soLuong, @gia)";
+
+                SqlCommand cmdSP = new SqlCommand(sqlSP, sqlCon);
+                cmdSP.Parameters.AddWithValue("@gioiTinh", gioiTinh);
+                cmdSP.Parameters.AddWithValue("@maLoai", textBox11.Text.Trim());
+                cmdSP.Parameters.AddWithValue("@maSP", textBox7.Text.Trim());
+                cmdSP.Parameters.AddWithValue("@maBienThe", textBox7.Text.Trim());
+                cmdSP.Parameters.AddWithValue("@tenSP", textBox10.Text.Trim());
+                cmdSP.Parameters.AddWithValue("@chatLieu", textBox8.Text.Trim());
+                cmdSP.Parameters.AddWithValue("@size", comboBox1.Text);
+                cmdSP.Parameters.AddWithValue("@mauSac", textBox13.Text.Trim());
+                cmdSP.Parameters.AddWithValue("@soLuong", numericUpDown2.Value);
+
+                decimal gia = 0;
+                decimal.TryParse(textBox6.Text.Trim(), out gia);
+                cmdSP.Parameters.AddWithValue("@gia", gia);
+
+                cmdSP.ExecuteNonQuery();
+                MessageBox.Show("Đã thêm sản phẩm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi thêm sản phẩm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
