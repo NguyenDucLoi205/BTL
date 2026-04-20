@@ -55,6 +55,7 @@ namespace BTL
             {
                 ShowProductsForInvoice(ma);
                 DieuDienThongTinSanPham(ma);
+                TinhTongTien();
             }
         }
 
@@ -281,19 +282,21 @@ namespace BTL
         {
             try
             {
-                MoKetNoi();
-                string query = "SELECT SUM(Tong_Tien_Thanh_Toan) FROM Hoa_Don";
-                SqlCommand cmd = new SqlCommand(query, sqlCon);
-                object result = cmd.ExecuteScalar();
-
-                if (result != DBNull.Value && result != null)
-                    textBox12.Text = string.Format("{0:N0}", result);
-                else
-                    textBox12.Text = "0";
+                decimal tongTien = 0;
+                foreach (DataGridViewRow row in dataGridView3.Rows)
+                {
+                    if (row.Cells["Column16"].Value != null &&
+                        row.Cells["Column16"].Value != DBNull.Value)
+                    {
+                        if (decimal.TryParse(row.Cells["Column16"].Value.ToString(), out decimal gia))
+                            tongTien += gia;
+                    }
+                }
+                textBox12.Text = string.Format("{0:N0}", tongTien);
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show("Lỗi tính tiền: " + ex.Message);
+                textBox12.Text = "0";
             }
         }
 
