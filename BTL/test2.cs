@@ -16,6 +16,7 @@ namespace BTL
         {
             InitializeComponent();
 
+            button1.Click += new EventHandler(btnChonAnh_Click);
             button2.Click += new EventHandler(btnThem_Click);
             button3.Click += new EventHandler(btnXoa_Click);
             button4.Click += new EventHandler(btnHuy_Click);
@@ -39,10 +40,10 @@ namespace BTL
             {
                 MoKetNoi();
 
-                // Load Hoa_Don
-                string query = @"SELECT Ma_Hop_Dong, Ngay_Nhap, Ma_Nhan_Vien, Ten_Nhan_Vien,
-                                So_Dien_Thoai_KH, Ten_Khach_Hang, Tong_Tien_Thanh_Toan
-                                FROM Hoa_Don";
+                // Load Hoa_don vao dataGridView2
+                string query = @"SELECT Ma_hop_dong, Ngay_nhap, Ma_Nhan_Vien, Ho_ten,
+                                SDT_KH, Ten_KH, Tong_tien
+                                FROM Hoa_don";
                 SqlCommand cmd = new SqlCommand(query, sqlCon);
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -50,42 +51,14 @@ namespace BTL
                 while (reader.Read())
                 {
                     int idx = dataGridView2.Rows.Add();
-                    dataGridView2.Rows[idx].Cells["Column1"].Value = reader["Ma_Hop_Dong"];
-                    dataGridView2.Rows[idx].Cells["Column2"].Value = reader["Ngay_Nhap"];
+                    dataGridView2.Rows[idx].Cells["Column1"].Value = reader["Ma_hop_dong"];
+                    dataGridView2.Rows[idx].Cells["Column2"].Value = reader["Ngay_nhap"];
                     dataGridView2.Rows[idx].Cells["Column3"].Value = reader["Ma_Nhan_Vien"];
-                    dataGridView2.Rows[idx].Cells["Column4"].Value = reader["Ten_Nhan_Vien"];
-                    dataGridView2.Rows[idx].Cells["Column5"].Value = reader["Ten_Khach_Hang"];
-                    dataGridView2.Rows[idx].Cells["Column6"].Value = reader["Tong_Tien_Thanh_Toan"];
+                    dataGridView2.Rows[idx].Cells["Column4"].Value = reader["Ho_ten"];
+                    dataGridView2.Rows[idx].Cells["Column5"].Value = reader["Ten_KH"];
+                    dataGridView2.Rows[idx].Cells["Column6"].Value = reader["Tong_tien"];
                 }
                 reader.Close();
-
-                // Load San_Pham vao dataGridView3
-                try
-                {
-                    string q2 = @"SELECT Ma_Gioi_Tinh, Ma_Loai, Ma_SP, Ma_Bien_The,
-                        Ten_San_Pham, Chat_Lieu, Size, Mau_Sac,
-                        So_Luong, Gia_San_Pham FROM San_Pham";
-                    SqlCommand cmd2 = new SqlCommand(q2, sqlCon);
-                    SqlDataReader reader2 = cmd2.ExecuteReader();
-
-                    dataGridView3.Rows.Clear();
-                    while (reader2.Read())
-                    {
-                        int idx = dataGridView3.Rows.Add();
-                        dataGridView3.Rows[idx].Cells["Column7"].Value = reader2["Ma_Gioi_Tinh"];
-                        dataGridView3.Rows[idx].Cells["Column8"].Value = reader2["Ma_Loai"];
-                        dataGridView3.Rows[idx].Cells["Column9"].Value = reader2["Ma_SP"];
-                        dataGridView3.Rows[idx].Cells["Column10"].Value = reader2["Ma_Bien_The"];
-                        dataGridView3.Rows[idx].Cells["Column11"].Value = reader2["Ten_San_Pham"];
-                        dataGridView3.Rows[idx].Cells["Column12"].Value = reader2["Chat_Lieu"];
-                        dataGridView3.Rows[idx].Cells["Column13"].Value = reader2["Size"];
-                        dataGridView3.Rows[idx].Cells["Column14"].Value = reader2["Mau_Sac"];
-                        dataGridView3.Rows[idx].Cells["Column15"].Value = reader2["So_Luong"];
-                        dataGridView3.Rows[idx].Cells["Column16"].Value = reader2["Gia_San_Pham"];
-                    }
-                    reader2.Close();
-                }
-                catch { }
             }
             catch (Exception ex)
             {
@@ -126,20 +99,20 @@ namespace BTL
         {
             bool enable = !readOnly;
             textBox1.ReadOnly = readOnly;
-            textBox2.ReadOnly = readOnly;  // SĐT KH
-            textBox3.ReadOnly = readOnly;  // Tên KH
-            textBox4.ReadOnly = readOnly;  // Mã NV
-            textBox5.ReadOnly = readOnly;  // Tên NV
+            textBox2.ReadOnly = readOnly;
+            textBox3.ReadOnly = readOnly;
+            textBox4.ReadOnly = readOnly;
+            textBox5.ReadOnly = readOnly;
             dateTimePicker1.Enabled = enable;
-            textBox7.ReadOnly = readOnly;   // Mã SP
-            textBox11.ReadOnly = readOnly;  // Loại SP
-            textBox10.ReadOnly = readOnly;  // Tên SP
-            textBox9.ReadOnly = readOnly;   // Mô Tả
-            textBox13.ReadOnly = readOnly; // Màu Sắc
-            comboBox1.Enabled = enable;     // Size
-            textBox8.ReadOnly = readOnly;   // Chất Liệu
+            textBox7.ReadOnly = readOnly;
+            textBox11.ReadOnly = readOnly;
+            textBox10.ReadOnly = readOnly;
+            textBox9.ReadOnly = readOnly;
+            textBox13.ReadOnly = readOnly;
+            comboBox1.Enabled = enable;
+            textBox8.ReadOnly = readOnly;
             numericUpDown2.ReadOnly = readOnly;
-            textBox6.ReadOnly = readOnly;   // Giá
+            textBox6.ReadOnly = readOnly;
             radioButton1.Enabled = enable;
             radioButton2.Enabled = enable;
             radioButton3.Enabled = enable;
@@ -156,19 +129,15 @@ namespace BTL
                 textBox1.Text = row.Cells["Column1"]?.Value?.ToString() ?? "";
                 textBox4.Text = row.Cells["Column3"]?.Value?.ToString() ?? "";
                 textBox5.Text = row.Cells["Column4"]?.Value?.ToString() ?? "";
+                textBox3.Text = row.Cells["Column5"]?.Value?.ToString() ?? "";
 
-                // Đổ dữ liệu Hoa_Don: textBox2 = SĐT KH, textBox3 = Tên KH
+                // Lay SDT_KH tu Hoa_don
                 MoKetNoi();
-                string queryHD = "SELECT So_Dien_Thoai_KH, Ten_Khach_Hang FROM Hoa_Don WHERE Ma_Hop_Dong = @ma";
+                string queryHD = "SELECT SDT_KH FROM Hoa_don WHERE Ma_hop_dong = @ma";
                 SqlCommand cmdHD = new SqlCommand(queryHD, sqlCon);
                 cmdHD.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
-                SqlDataReader readerHD = cmdHD.ExecuteReader();
-                if (readerHD.Read())
-                {
-                    textBox2.Text = readerHD["So_Dien_Thoai_KH"]?.ToString() ?? "";
-                    textBox3.Text = readerHD["Ten_Khach_Hang"]?.ToString() ?? "";
-                }
-                readerHD.Close();
+                var sdtVal = cmdHD.ExecuteScalar();
+                textBox2.Text = sdtVal?.ToString() ?? "";
 
                 var ngayVal = row.Cells["Column2"]?.Value;
                 if (ngayVal != null && ngayVal != DBNull.Value)
@@ -193,12 +162,22 @@ namespace BTL
             try
             {
                 MoKetNoi();
-                string query = @"SELECT sp.Ma_Gioi_Tinh, sp.Ma_Loai, sp.Ma_SP, sp.Ma_Bien_The,
-                    sp.Ten_San_Pham, sp.Chat_Lieu, sp.Size, sp.Mau_Sac,
-                    ctd.So_Luong, ctd.Gia_San_Pham
-                    FROM Chi_Tiet_Hoa_Don ctd
-                    INNER JOIN San_Pham sp ON ctd.Ma_SP = sp.Ma_SP
-                    WHERE ctd.Ma_Hop_Dong = @ma";
+                // JOIN Chi_tiet_Hoa_don -> San_Pham -> Chatlieu_Size_Soluong_Gia
+                string query = @"SELECT
+                    sp.Ma_Gioi_Tinh,
+                    sp.Ma_Loai,
+                    sp.Ma_San_Pham,
+                    ctd.Ma_bien_thee,
+                    sp.Ten_San_Pham,
+                    csvsg.Chat_lieu,
+                    csvsg.Size,
+                    csvsg.Mau_Sac,
+                    ctd.So_luong_ban,
+                    ctd.gia_san_pham
+                FROM Chi_tiet_Hoa_don ctd
+                INNER JOIN San_Pham sp ON ctd.Ma_San_Pham = sp.Ma_San_Pham
+                INNER JOIN Chatlieu_Size_Soluong_Gia csvsg ON ctd.Ma_bien_thee = csvsg.Ma_Bien_The
+                WHERE ctd.Ma_hop_dong = @ma";
 
                 SqlCommand cmd = new SqlCommand(query, sqlCon);
                 cmd.Parameters.AddWithValue("@ma", maHopDong);
@@ -210,18 +189,21 @@ namespace BTL
                     int idx = dataGridView3.Rows.Add();
                     dataGridView3.Rows[idx].Cells["Column7"].Value = reader["Ma_Gioi_Tinh"];
                     dataGridView3.Rows[idx].Cells["Column8"].Value = reader["Ma_Loai"];
-                    dataGridView3.Rows[idx].Cells["Column9"].Value = reader["Ma_SP"];
-                    dataGridView3.Rows[idx].Cells["Column10"].Value = reader["Ma_Bien_The"];
+                    dataGridView3.Rows[idx].Cells["Column9"].Value = reader["Ma_San_Pham"];
+                    dataGridView3.Rows[idx].Cells["Column10"].Value = reader["Ma_bien_thee"];
                     dataGridView3.Rows[idx].Cells["Column11"].Value = reader["Ten_San_Pham"];
-                    dataGridView3.Rows[idx].Cells["Column12"].Value = reader["Chat_Lieu"];
+                    dataGridView3.Rows[idx].Cells["Column12"].Value = reader["Chat_lieu"];
                     dataGridView3.Rows[idx].Cells["Column13"].Value = reader["Size"];
                     dataGridView3.Rows[idx].Cells["Column14"].Value = reader["Mau_Sac"];
-                    dataGridView3.Rows[idx].Cells["Column15"].Value = reader["So_Luong"];
-                    dataGridView3.Rows[idx].Cells["Column16"].Value = reader["Gia_San_Pham"];
+                    dataGridView3.Rows[idx].Cells["Column15"].Value = reader["So_luong_ban"];
+                    dataGridView3.Rows[idx].Cells["Column16"].Value = reader["gia_san_pham"];
                 }
                 reader.Close();
             }
-            catch { dataGridView3.Rows.Clear(); }
+            catch (Exception ex)
+            {
+                dataGridView3.Rows.Clear();
+            }
         }
 
         // ===================== NÚT THÊM (button2) =====================
@@ -253,10 +235,11 @@ namespace BTL
             {
                 MoKetNoi();
 
-                // Lấy tổng tiền từ dataGridView3
+                // Tính tổng tiền từ dataGridView3
                 decimal tongTien = 0;
                 foreach (DataGridViewRow row in dataGridView3.Rows)
                 {
+                    if (row.IsNewRow) continue;
                     if (row.Cells["Column16"].Value != null &&
                         row.Cells["Column16"].Value != DBNull.Value &&
                         decimal.TryParse(row.Cells["Column16"].Value.ToString(), out decimal gia))
@@ -265,38 +248,40 @@ namespace BTL
                     }
                 }
 
-                // INSERT Hoa_Don
-                string sqlHoaDon = @"INSERT INTO Hoa_Don
-                    (Ma_Hop_Dong, Ngay_Nhap, Ma_Nhan_Vien, Ten_Nhan_Vien, So_Dien_Thoai_KH, Ten_Khach_Hang, Tong_Tien_Thanh_Toan)
-                    VALUES (@ma, @ngay, @manv, @tenNV, @sdt, @tenKH, @tongtien)";
+                // INSERT Hoa_don
+                string sqlHoaDon = @"INSERT INTO Hoa_don
+                    (Ma_hop_dong, Ngay_nhap, Ma_Nhan_Vien, Ho_ten, SDT_KH, Ten_KH, Tong_tien)
+                    VALUES (@ma, @ngay, @manv, @hoTen, @sdt, @tenKH, @tongtien)";
 
                 SqlCommand cmdHD = new SqlCommand(sqlHoaDon, sqlCon);
                 cmdHD.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
                 cmdHD.Parameters.AddWithValue("@ngay", dateTimePicker1.Value);
                 cmdHD.Parameters.AddWithValue("@manv", textBox4.Text.Trim());
-                cmdHD.Parameters.AddWithValue("@tenNV", textBox5.Text.Trim());
+                cmdHD.Parameters.AddWithValue("@hoTen", textBox5.Text.Trim());
                 cmdHD.Parameters.AddWithValue("@sdt", textBox2.Text.Trim());
                 cmdHD.Parameters.AddWithValue("@tenKH", textBox3.Text.Trim());
                 cmdHD.Parameters.AddWithValue("@tongtien", tongTien);
                 cmdHD.ExecuteNonQuery();
 
-                // INSERT Chi_Tiet_Hoa_Don cho từng sản phẩm trong dataGridView3
+                // INSERT Chi_tiet_Hoa_don cho từng sản phẩm trong dataGridView3
                 foreach (DataGridViewRow row in dataGridView3.Rows)
                 {
                     if (row.IsNewRow) continue;
                     if (row.Cells["Column9"].Value == null) continue;
 
                     string maSP = row.Cells["Column9"].Value?.ToString() ?? "";
+                    string maBienThe = row.Cells["Column10"].Value?.ToString() ?? "";
                     decimal soLuong = 0;
                     decimal giaSP = 0;
                     decimal.TryParse(row.Cells["Column15"].Value?.ToString(), out soLuong);
                     decimal.TryParse(row.Cells["Column16"].Value?.ToString(), out giaSP);
 
-                    string sqlCT = @"INSERT INTO Chi_Tiet_Hoa_Don (Ma_Hop_Dong, Ma_SP, So_Luong, Gia_San_Pham)
-                                     VALUES (@maHD, @maSP, @sl, @gia)";
+                    string sqlCT = @"INSERT INTO Chi_tiet_Hoa_don (Ma_hop_dong, Ma_San_Pham, Ma_bien_thee, So_luong_ban, gia_san_pham)
+                                     VALUES (@maHD, @maSP, @maBT, @sl, @gia)";
                     SqlCommand cmdCT = new SqlCommand(sqlCT, sqlCon);
                     cmdCT.Parameters.AddWithValue("@maHD", textBox1.Text.Trim());
                     cmdCT.Parameters.AddWithValue("@maSP", maSP);
+                    cmdCT.Parameters.AddWithValue("@maBT", maBienThe);
                     cmdCT.Parameters.AddWithValue("@sl", soLuong);
                     cmdCT.Parameters.AddWithValue("@gia", giaSP);
                     try { cmdCT.ExecuteNonQuery(); } catch { }
@@ -322,16 +307,16 @@ namespace BTL
                 {
                     MoKetNoi();
 
-                    // Xoá chi tiết hoá đơn trước
                     if (!string.IsNullOrWhiteSpace(textBox1.Text))
                     {
-                        string sqlDelCT = "DELETE FROM Chi_Tiet_Hoa_Don WHERE Ma_Hop_Dong = @ma";
+                        // Xoá chi tiết hoá đơn trước (khoa ngoai)
+                        string sqlDelCT = "DELETE FROM Chi_tiet_Hoa_don WHERE Ma_hop_dong = @ma";
                         SqlCommand cmdDelCT = new SqlCommand(sqlDelCT, sqlCon);
                         cmdDelCT.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
                         cmdDelCT.ExecuteNonQuery();
 
                         // Xoá hoá đơn
-                        string sqlXoa = "DELETE FROM Hoa_Don WHERE Ma_Hop_Dong = @ma";
+                        string sqlXoa = "DELETE FROM Hoa_don WHERE Ma_hop_dong = @ma";
                         SqlCommand cmd = new SqlCommand(sqlXoa, sqlCon);
                         cmd.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
                         cmd.ExecuteNonQuery();
@@ -391,20 +376,20 @@ namespace BTL
                         tongTien += gia;
                 }
 
-                string sqlUpdate = @"UPDATE Hoa_Don SET
-                    Ngay_Nhap = @ngay,
+                string sqlUpdate = @"UPDATE Hoa_don SET
+                    Ngay_nhap = @ngay,
                     Ma_Nhan_Vien = @manv,
-                    Ten_Nhan_Vien = @tenNV,
-                    So_Dien_Thoai_KH = @sdt,
-                    Ten_Khach_Hang = @tenKH,
-                    Tong_Tien_Thanh_Toan = @tongtien
-                    WHERE Ma_Hop_Dong = @ma";
+                    Ho_ten = @hoTen,
+                    SDT_KH = @sdt,
+                    Ten_KH = @tenKH,
+                    Tong_tien = @tongtien
+                    WHERE Ma_hop_dong = @ma";
 
                 SqlCommand cmd = new SqlCommand(sqlUpdate, sqlCon);
                 cmd.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
                 cmd.Parameters.AddWithValue("@ngay", dateTimePicker1.Value);
                 cmd.Parameters.AddWithValue("@manv", textBox4.Text.Trim());
-                cmd.Parameters.AddWithValue("@tenNV", textBox5.Text.Trim());
+                cmd.Parameters.AddWithValue("@hoTen", textBox5.Text.Trim());
                 cmd.Parameters.AddWithValue("@sdt", textBox2.Text.Trim());
                 cmd.Parameters.AddWithValue("@tenKH", textBox3.Text.Trim());
                 cmd.Parameters.AddWithValue("@tongtien", tongTien);
@@ -424,48 +409,18 @@ namespace BTL
             }
         }
 
-        // ===================== NÚT CHỌN SẢN PHẨM (button1) =====================
-        private void btnChonSanPham_Click(object? sender, EventArgs e)
+        // ===================== NÚT CHỌN ẢNH (button1) =====================
+        private void btnChonAnh_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBox7.Text))
-            {
-                MessageBox.Show("Vui lòng nhập Mã Sản Phẩm!", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            OpenFileDialog openFile = new OpenFileDialog();
+            openFile.Title = "Chọn ảnh sản phẩm";
+            openFile.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            openFile.Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp; *.png)|*.jpg; *.jpeg; *.gif; *.bmp; *.png";
 
-            if (string.IsNullOrWhiteSpace(textBox6.Text))
+            if (openFile.ShowDialog() == DialogResult.OK)
             {
-                MessageBox.Show("Vui lòng nhập Giá Sản Phẩm!", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            try
-            {
-                string gioiTinh = radioButton2.Checked ? "Nữ" : radioButton3.Checked ? "Unisex" : "Nam";
-                decimal soLuong = numericUpDown2.Value;
-                decimal gia = 0;
-                decimal.TryParse(textBox6.Text.Trim(), out gia);
-
-                // Thêm vào dataGridView3
-                int idx = dataGridView3.Rows.Add();
-                dataGridView3.Rows[idx].Cells["Column7"].Value = gioiTinh;
-                dataGridView3.Rows[idx].Cells["Column8"].Value = textBox11.Text.Trim();
-                dataGridView3.Rows[idx].Cells["Column9"].Value = textBox7.Text.Trim();
-                dataGridView3.Rows[idx].Cells["Column10"].Value = textBox7.Text.Trim();
-                dataGridView3.Rows[idx].Cells["Column11"].Value = textBox10.Text.Trim();
-                dataGridView3.Rows[idx].Cells["Column12"].Value = textBox8.Text.Trim();
-                dataGridView3.Rows[idx].Cells["Column13"].Value = comboBox1.Text;
-                dataGridView3.Rows[idx].Cells["Column14"].Value = textBox13.Text.Trim();
-                dataGridView3.Rows[idx].Cells["Column15"].Value = soLuong;
-                dataGridView3.Rows[idx].Cells["Column16"].Value = gia;
-
-                TinhTongTien();
-                LamTrongTextBoxSP();
-                MessageBox.Show("Đã thêm sản phẩm vào danh sách!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi khi thêm sản phẩm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                pictureBox2.Image = new Bitmap(openFile.FileName);
+                pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             }
         }
 
@@ -515,36 +470,7 @@ namespace BTL
             radioButton1.Checked = true;
             pictureBox2.Image = null;
             dateTimePicker1.Value = DateTime.Now;
-        }
-
-        private void LamTrongTextBoxSP()
-        {
-            textBox7.Clear();
-            textBox11.Clear();
-            textBox10.Clear();
-            textBox9.Clear();
-            textBox13.Clear();
-            textBox8.Clear();
-            comboBox1.SelectedIndex = -1;
-            numericUpDown2.Value = 0;
-            textBox6.Clear();
-            radioButton1.Checked = true;
-            pictureBox2.Image = null;
-        }
-
-        private void btnChonAnh_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFile = new OpenFileDialog();
-            openFile.Title = "Chọn ảnh sản phẩm";
-            openFile.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-            openFile.Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp; *.png)|*.jpg; *.jpeg; *.gif; *.bmp; *.png";
-
-            if (openFile.ShowDialog() == DialogResult.OK)
-            {
-                pictureBox2.Image = new Bitmap(openFile.FileName);
-                pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-                pictureBox2.Tag = openFile.FileName;
-            }
+            dataGridView3.Rows.Clear();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
