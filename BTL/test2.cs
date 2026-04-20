@@ -21,6 +21,7 @@ namespace BTL
             button4.Click += new EventHandler(btnHuy_Click);
             button5.Click += new EventHandler(btnChinhSua_Click);
             button6.Click += new EventHandler(btnLamMoi_Click);
+            button1.Click += new EventHandler(btnChonSanPham_Click);
 
             SetFormReadOnly(true);
 
@@ -224,7 +225,7 @@ namespace BTL
                 MoKetNoi();
 
                 // Load Hoa_Don - manually populate rows to use pre-defined columns
-                string query = "SELECT Ma_Hop_Dong, Ngay_Nhap, Ma_Nhan_Vien, Ten_Nhan_Vien, Ten_Khach_Hang, So_Dien_Thoai, Tong_Tien_Thanh_Toan FROM Hoa_Don";
+                string query = "SELECT Ma_Hop_Dong, Ngay_Nhap, Ma_Nhan_Vien, Ten_Nhan_Vien, Tong_Nhan_Vien, Tong_Tien_Thanh_Toan FROM Hoa_Don";
                 SqlCommand cmd = new SqlCommand(query, sqlCon);
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -236,7 +237,7 @@ namespace BTL
                     dataGridView2.Rows[idx].Cells["Column2"].Value = reader["Ngay_Nhap"];
                     dataGridView2.Rows[idx].Cells["Column3"].Value = reader["Ma_Nhan_Vien"];
                     dataGridView2.Rows[idx].Cells["Column4"].Value = reader["Ten_Nhan_Vien"];
-                    dataGridView2.Rows[idx].Cells["Column5"].Value = reader["Ten_Khach_Hang"];
+                    dataGridView2.Rows[idx].Cells["Column5"].Value = reader["Tong_Nhan_Vien"];
                     dataGridView2.Rows[idx].Cells["Column6"].Value = reader["Tong_Tien_Thanh_Toan"];
                 }
                 reader.Close();
@@ -355,24 +356,22 @@ namespace BTL
             try
             {
                 MoKetNoi();
+                decimal tongTien = 0;
+                decimal.TryParse(textBox6.Text.Trim(), out tongTien);
                 string gioiTinh = "Nam";
                 if (radioButton2.Checked) gioiTinh = "Nữ";
                 else if (radioButton3.Checked) gioiTinh = "Unisex";
 
                 string sqlHoaDon = @"INSERT INTO Hoa_Don
-                    (Ma_Hop_Dong, Ngay_Nhap, Ma_Nhan_Vien, Ten_Khach_Hang, So_Dien_Thoai, Ten_Nhan_Vien, Tong_Tien_Thanh_Toan)
-                    VALUES (@ma, @ngay, @manv, @tenKH, @sdt, @tenNV, @tongtien)";
+                    (Ma_Hop_Dong, Ngay_Nhap, Ma_Nhan_Vien, Ten_Nhan_Vien, Tong_Nhan_Vien, Tong_Tien_Thanh_Toan)
+                    VALUES (@ma, @ngay, @manv, @tenNV, @tongNV, @tongtien)";
 
                 SqlCommand cmdHD = new SqlCommand(sqlHoaDon, sqlCon);
                 cmdHD.Parameters.AddWithValue("@ma", textBox1.Text.Trim());
                 cmdHD.Parameters.AddWithValue("@ngay", dateTimePicker1.Value);
                 cmdHD.Parameters.AddWithValue("@manv", textBox4.Text.Trim());
-                cmdHD.Parameters.AddWithValue("@tenKH", textBox2.Text.Trim());
-                cmdHD.Parameters.AddWithValue("@sdt", textBox3.Text.Trim());
                 cmdHD.Parameters.AddWithValue("@tenNV", textBox5.Text.Trim());
-
-                decimal tongTien = 0;
-                decimal.TryParse(textBox6.Text.Trim(), out tongTien);
+                cmdHD.Parameters.AddWithValue("@tongNV", textBox2.Text.Trim());
                 cmdHD.Parameters.AddWithValue("@tongtien", tongTien);
                 cmdHD.ExecuteNonQuery();
 
