@@ -143,7 +143,6 @@ namespace BTL
             radioButton1.Enabled = enable;
             radioButton2.Enabled = enable;
             radioButton3.Enabled = enable;
-            button1.Enabled = enable;
         }
 
         // ===================== CHỌN HÓA ĐƠN =====================
