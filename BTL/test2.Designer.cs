@@ -635,7 +635,7 @@ namespace BTL
             dataGridView2.Size = new Size(667, 246);
             dataGridView2.TabIndex = 65;
             dataGridView2.CellContentClick += dataGridView2_CellContentClick;
-            dataGridView2.SelectionChanged += dataGridView2_SelectionChanged;
+            dataGridView2.SelectionChanged += DataGridView2_SelectionChanged;
             // 
             // dataGridView3
             // 
